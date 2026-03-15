@@ -465,7 +465,7 @@ export default function LandingPageDesignRequest() {
                     <p className="font-['Inter:Regular','Noto_Sans_KR:Regular',sans-serif] font-normal leading-[normal] not-italic relative shrink-0 text-[#99a1af] text-[18px] whitespace-nowrap">이메일 주소를 입력하세요</p>
                   </div>
                 </div>
-                <div className="bg-[#101828] h-[68px] relative rounded-[16px] shadow-[0px_25px_50px_0px_rgba(0,0,0,0.25)] shrink-0 w-[310.988px]" data-name="Button">
+                <div className="bg-[#101828] h-[68px] relative rounded-[16px] shadow-[0px_25px_50px_0px_rgba(0,0,0,0.25)] shrink-0 w-[310.988px] action-btn-hover cursor-pointer" data-name="Button">
                   <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex gap-[12px] items-center justify-center px-[40px] relative size-full">
                     <BackgroundImage1 additionalClassNames="relative shrink-0">
                       <path d={svgPaths.pd919a80} id="Vector" stroke="var(--stroke-0, white)" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.66667" />
@@ -522,9 +522,9 @@ export default function LandingPageDesignRequest() {
               </div>
             </div>
           </div>
-          <div className="absolute h-[380px] left-[128px] rounded-[24px] top-[421.6px] w-[896px]" data-name="Container" style={{ backgroundImage: "linear-gradient(171.302deg, rgba(250, 245, 255, 0.5) 8.4735%, rgba(239, 246, 255, 0.5) 91.527%)" }}>
-            <div className="absolute bg-[rgba(255,255,255,0)] border-[0.8px] border-[rgba(229,231,235,0.5)] border-solid h-[380px] left-0 rounded-[24px] shadow-[0px_20px_25px_0px_rgba(0,0,0,0.1),0px_8px_10px_0px_rgba(0,0,0,0.1)] top-0 w-[896px]" data-name="Container" />
-            <div className="absolute bg-white h-[160px] left-[32.8px] rounded-[16px] top-[112px] w-[830.4px]" data-name="Container">
+          <div className="absolute left-[50%] -translate-x-1/2 rounded-[24px] top-[421.6px] w-[calc(100%-32px)] max-w-[896px] md:left-[128px] md:translate-x-0 md:w-[896px] min-h-[380px]" data-name="Container" style={{ backgroundImage: "linear-gradient(171.302deg, rgba(250, 245, 255, 0.5) 8.4735%, rgba(239, 246, 255, 0.5) 91.527%)" }}>
+            <div className="absolute bg-[rgba(255,255,255,0)] border-[0.8px] border-[rgba(229,231,235,0.5)] border-solid h-[380px] left-0 rounded-[24px] shadow-[0px_20px_25px_0px_rgba(0,0,0,0.1),0px_8px_10px_0px_rgba(0,0,0,0.1)] top-0 w-full" data-name="Container" />
+            <div className="absolute bg-white h-[160px] left-[32.8px] right-[32.8px] md:right-auto rounded-[16px] top-[112px] w-[calc(100%-65.6px)] md:w-[830.4px]" data-name="Container">
               <div className="absolute h-[160px] left-0 overflow-clip rounded-[16px] top-0 w-[830.4px]" data-name="Container">
                 <div className="absolute h-[24px] left-[24px] top-[16px] w-[399.375px]" data-name="Paragraph">
                   <p className="absolute font-['Inter:Regular','Noto_Sans_KR:Regular',sans-serif] font-normal leading-[24px] left-0 not-italic text-[#99a1af] text-[16px] top-[-0.6px] whitespace-nowrap">오늘 있었던 일이나 떠오르는 생각을 3줄 내외로 적어보세요.</p>
@@ -532,9 +532,9 @@ export default function LandingPageDesignRequest() {
               </div>
               <div className="absolute border-[#e5e7eb] border-[1.6px] border-solid h-[160px] left-0 rounded-[16px] top-0 w-[830.4px]" data-name="Container" />
             </div>
-            <div className="absolute bg-gradient-to-b from-[#8a2be2] h-[68px] left-[32.8px] rounded-[16px] shadow-[0px_25px_50px_0px_rgba(173,70,255,0.3)] to-[#007bff] top-[292px] w-[830.4px]" data-name="Container">
-              <div className="absolute content-stretch flex gap-[12px] h-[43.2px] items-center left-0 top-[-259.2px] w-[262.4px]" data-name="PlatformTabs">
-                <div className="bg-gradient-to-b from-[#8a2be2] h-[40px] relative rounded-[12px] shadow-[0px_4px_6px_0px_rgba(138,43,226,0.25)] shrink-0 to-[#007bff] w-[124.4px]" data-name="Button">
+            <div className="absolute bg-gradient-to-b from-[#8a2be2] h-[68px] left-[32.8px] right-[32.8px] md:right-auto rounded-[16px] shadow-[0px_25px_50px_0px_rgba(173,70,255,0.3)] to-[#007bff] top-[292px] w-[calc(100%-65.6px)] md:w-[830.4px] action-btn-hover" data-name="Container">
+              <div className="absolute content-stretch flex gap-[12px] h-[43.2px] items-center left-0 right-0 top-[-259.2px] w-full md:w-[262.4px] justify-center md:justify-start" data-name="PlatformTabs">
+                <div className="bg-gradient-to-b from-[#8a2be2] h-[40px] relative rounded-[12px] shadow-[0px_4px_6px_0px_rgba(138,43,226,0.25)] shrink-0 to-[#007bff] w-[124.4px] action-btn-hover cursor-pointer" data-name="Button">
                   <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex gap-[8px] items-center px-[16px] relative size-full">
                     <ContainerBackgroundImage3>
                       <div className="h-[20px] overflow-clip relative shrink-0 w-full" data-name="Icon">
@@ -568,7 +568,7 @@ export default function LandingPageDesignRequest() {
                     </div>
                   </div>
                 </div>
-                <div className="bg-white h-[43.2px] relative rounded-[12px] shrink-0 w-[126px]" data-name="Button">
+                <div className="bg-white h-[43.2px] relative rounded-[12px] shrink-0 w-[126px] action-btn-hover cursor-pointer" data-name="Button">
                   <div aria-hidden="true" className="absolute border-[#e5e7eb] border-[1.6px] border-solid inset-0 pointer-events-none rounded-[12px]" />
                   <div className="bg-clip-padding border-0 border-[transparent] border-solid content-stretch flex gap-[8px] items-center pl-[17.6px] pr-[1.6px] py-[1.6px] relative size-full">
                     <ContainerBackgroundImage3>
@@ -930,57 +930,63 @@ export default function LandingPageDesignRequest() {
             </div>
           </div>
         </div>
-        <div className="absolute bg-white content-stretch flex flex-col gap-[64px] h-[600px] items-center left-[3px] pt-[80px] px-[24px] top-[848.2px] w-[1179px]" data-name="Section">
+        <div className="absolute bg-white content-stretch flex flex-col gap-[64px] h-auto min-h-[600px] items-center left-[3px] pt-[80px] px-[24px] pb-12 top-[848.2px] w-full max-w-[1179px] md:w-[1179px]" data-name="Section">
           <div className="h-[96px] relative shrink-0 w-full" data-name="Heading 2">
-            <p className="-translate-x-1/2 absolute font-['Inter:Bold','Noto_Sans_KR:Bold',sans-serif] font-bold leading-[48px] left-[552.77px] not-italic text-[#101828] text-[48px] text-center top-[-3px] whitespace-nowrap">콘텐츠는 있는데,</p>
-            <div className="absolute content-stretch flex h-[64px] items-start left-[275.83px] top-[40px] w-[552.338px]" data-name="Text">
+            <p className="-translate-x-1/2 absolute font-['Inter:Bold','Noto_Sans_KR:Bold',sans-serif] font-bold leading-[48px] left-[50%] not-italic text-[#101828] text-[48px] text-center top-[-3px] whitespace-nowrap">콘텐츠는 있는데,</p>
+            <div className="absolute content-stretch flex h-[64px] items-start left-[50%] top-[40px] w-[552.338px] -translate-x-1/2" data-name="Text">
               <p className="bg-[top_left,center] bg-clip-text bg-size-[auto_auto,cover] flex-[1_0_0] font-['Inter:Bold','Noto_Sans_KR:Bold',sans-serif] font-bold leading-[48px] min-h-px min-w-px not-italic relative text-[48px] text-[transparent] text-center" style={{ backgroundRepeat: "repeat, no-repeat", backgroundImage: `linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0) 100%), url('${img}')` }}>
                 올릴 엄두가 안 나시나요?
               </p>
             </div>
           </div>
-          <div className="h-[280px] relative shrink-0 w-[1104px]" data-name="Container">
-            <ContainerBackgroundImage7 additionalClassNames="left-0">
-              <div className="absolute content-stretch flex items-center justify-center left-[32px] px-[16px] rounded-[16px] shadow-[0px_10px_15px_0px_rgba(0,0,0,0.1),0px_4px_6px_0px_rgba(0,0,0,0.1)] size-[64px] top-[32px]" data-name="Container" style={{ backgroundImage: "linear-gradient(135deg, rgb(255, 32, 86) 0%, rgb(246, 51, 154) 100%)" }}>
-                <BackgroundImage>
-                  <path d={svgPaths.p1dee4500} id="Vector" stroke="var(--stroke-0, white)" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.66667" />
-                  <path d={svgPaths.p143aa970} id="Vector_2" stroke="var(--stroke-0, white)" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.66667" />
-                  <path d="M12 12H12.0133" id="Vector_3" stroke="var(--stroke-0, white)" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.66667" />
-                  <path d="M20 12H20.0133" id="Vector_4" stroke="var(--stroke-0, white)" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.66667" />
-                </BackgroundImage>
-              </div>
-              <HeadingBackgroundImageAndText text="플랫폼별 피로도" additionalClassNames="w-[281.063px]" />
-              <div className="absolute h-[78px] left-[32px] top-[167.99px] w-[281.063px]" data-name="Paragraph">
-                <p className="absolute font-['Inter:Regular','Noto_Sans_KR:Regular',sans-serif] font-normal leading-[26px] left-0 not-italic text-[#4a5565] text-[16px] top-[-2.4px] w-[280px]">인스타는 감성적으로, X는 간결하게, 네이버 블로그는 친근하게... 플랫폼마다 다른 톤앤매너에 지쳐버렸어요</p>
-              </div>
-            </ContainerBackgroundImage7>
-            <ContainerBackgroundImage7 additionalClassNames="left-[378.66px]">
-              <div className="absolute content-stretch flex items-center justify-center left-[32px] px-[16px] rounded-[16px] shadow-[0px_10px_15px_0px_rgba(0,0,0,0.1),0px_4px_6px_0px_rgba(0,0,0,0.1)] size-[64px] top-[32px]" data-name="Container" style={{ backgroundImage: "linear-gradient(135deg, rgb(255, 105, 0) 0%, rgb(254, 154, 0) 100%)" }}>
-                <BackgroundImage>
-                  <path d={svgPaths.p1ddd1a60} id="Vector" stroke="var(--stroke-0, white)" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.66667" />
-                  <path d={svgPaths.p1763c540} id="Vector_2" stroke="var(--stroke-0, white)" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.66667" />
-                  <path d="M18 18L8 28" id="Vector_3" stroke="var(--stroke-0, white)" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.66667" />
-                  <path d="M24 16L28 20" id="Vector_4" stroke="var(--stroke-0, white)" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.66667" />
-                  <path d={svgPaths.p7416f00} id="Vector_5" stroke="var(--stroke-0, white)" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.66667" />
-                  <path d={svgPaths.p14cf4880} id="Vector_6" stroke="var(--stroke-0, white)" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.66667" />
-                </BackgroundImage>
-              </div>
-              <HeadingBackgroundImageAndText text="이미지 선택 어려움" additionalClassNames="w-[281.063px]" />
-              <div className="absolute h-[78px] left-[32px] top-[167.99px] w-[281.063px]" data-name="Paragraph">
-                <p className="absolute font-['Inter:Regular','Noto_Sans_KR:Regular',sans-serif] font-normal leading-[26px] left-0 not-italic text-[#4a5565] text-[16px] top-[-2.4px] w-[276px]">어떤 이미지가 어울릴까? 어디 이미지를 배치할까? 이미지를 고르다가 시간만 흘러가요</p>
-              </div>
-            </ContainerBackgroundImage7>
-            <div className="absolute border-[0.8px] border-[rgba(229,231,235,0.5)] border-solid h-[279.587px] left-[757.33px] rounded-[24px] top-0 w-[346.675px]" data-name="Container" style={{ backgroundImage: "linear-gradient(141.114deg, rgb(249, 250, 251) 0%, rgba(243, 244, 246, 0.5) 100%)" }}>
-              <div className="absolute content-stretch flex items-center justify-center left-[32px] px-[16px] rounded-[16px] shadow-[0px_10px_15px_0px_rgba(0,0,0,0.1),0px_4px_6px_0px_rgba(0,0,0,0.1)] size-[64px] top-[32px]" data-name="Container" style={{ backgroundImage: "linear-gradient(135deg, rgb(173, 70, 255) 0%, rgb(142, 81, 255) 100%)" }}>
-                <BackgroundImage>
-                  <path d={svgPaths.p1dee4500} id="Vector" stroke="var(--stroke-0, white)" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.66667" />
-                  <path d="M20 12L12 20" id="Vector_2" stroke="var(--stroke-0, white)" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.66667" />
-                  <path d="M12 12L20 20" id="Vector_3" stroke="var(--stroke-0, white)" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.66667" />
-                </BackgroundImage>
-              </div>
-              <HeadingBackgroundImageAndText text="결국 포기" additionalClassNames="w-[281.075px]" />
-              <div className="absolute h-[52px] left-[32px] top-[167.99px] w-[281.075px]" data-name="Paragraph">
-                <p className="absolute font-['Inter:Regular','Noto_Sans_KR:Regular',sans-serif] font-normal leading-[26px] left-0 not-italic text-[#4a5565] text-[16px] top-[-2.4px] w-[279px]">완벽하게 만들려다 번아웃... 결국 초안만 쌓여가고 포스팅은 미뤄지기만 해요</p>
+          <div className="flex flex-col gap-6 md:block md:h-[280px] md:relative w-full max-w-[1104px] md:w-[1104px] shrink-0" data-name="Container">
+            <div className="relative w-full px-4 min-h-[279.587px] md:absolute md:left-0 md:min-h-0 md:w-[346.663px] md:px-0 animate-result-card opacity-0">
+              <ContainerBackgroundImage7 additionalClassNames="!left-0 !top-0 w-full md:!w-[346.663px]">
+                <div className="absolute content-stretch flex items-center justify-center left-[32px] px-[16px] rounded-[16px] shadow-[0px_10px_15px_0px_rgba(0,0,0,0.1),0px_4px_6px_0px_rgba(0,0,0,0.1)] size-[64px] top-[32px]" data-name="Container" style={{ backgroundImage: "linear-gradient(135deg, rgb(255, 32, 86) 0%, rgb(246, 51, 154) 100%)" }}>
+                  <BackgroundImage>
+                    <path d={svgPaths.p1dee4500} id="Vector" stroke="var(--stroke-0, white)" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.66667" />
+                    <path d={svgPaths.p143aa970} id="Vector_2" stroke="var(--stroke-0, white)" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.66667" />
+                    <path d="M12 12H12.0133" id="Vector_3" stroke="var(--stroke-0, white)" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.66667" />
+                    <path d="M20 12H20.0133" id="Vector_4" stroke="var(--stroke-0, white)" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.66667" />
+                  </BackgroundImage>
+                </div>
+                <HeadingBackgroundImageAndText text="플랫폼별 피로도" additionalClassNames="w-[281.063px]" />
+                <div className="absolute h-[78px] left-[32px] top-[167.99px] w-[281.063px]" data-name="Paragraph">
+                  <p className="absolute font-['Inter:Regular','Noto_Sans_KR:Regular',sans-serif] font-normal leading-[26px] left-0 not-italic text-[#4a5565] text-[16px] top-[-2.4px] w-[280px]">인스타는 감성적으로, X는 간결하게, 네이버 블로그는 친근하게... 플랫폼마다 다른 톤앤매너에 지쳐버렸어요</p>
+                </div>
+              </ContainerBackgroundImage7>
+            </div>
+            <div className="relative w-full px-4 min-h-[279.587px] md:absolute md:left-[378.66px] md:min-h-0 md:w-[346.663px] md:px-0 animate-result-card animate-result-card-delay-1 opacity-0">
+              <ContainerBackgroundImage7 additionalClassNames="!left-0 !top-0 w-full md:!w-[346.663px]">
+                <div className="absolute content-stretch flex items-center justify-center left-[32px] px-[16px] rounded-[16px] shadow-[0px_10px_15px_0px_rgba(0,0,0,0.1),0px_4px_6px_0px_rgba(0,0,0,0.1)] size-[64px] top-[32px]" data-name="Container" style={{ backgroundImage: "linear-gradient(135deg, rgb(255, 105, 0) 0%, rgb(254, 154, 0) 100%)" }}>
+                  <BackgroundImage>
+                    <path d={svgPaths.p1ddd1a60} id="Vector" stroke="var(--stroke-0, white)" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.66667" />
+                    <path d={svgPaths.p1763c540} id="Vector_2" stroke="var(--stroke-0, white)" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.66667" />
+                    <path d="M18 18L8 28" id="Vector_3" stroke="var(--stroke-0, white)" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.66667" />
+                    <path d="M24 16L28 20" id="Vector_4" stroke="var(--stroke-0, white)" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.66667" />
+                    <path d={svgPaths.p7416f00} id="Vector_5" stroke="var(--stroke-0, white)" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.66667" />
+                    <path d={svgPaths.p14cf4880} id="Vector_6" stroke="var(--stroke-0, white)" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.66667" />
+                  </BackgroundImage>
+                </div>
+                <HeadingBackgroundImageAndText text="이미지 선택 어려움" additionalClassNames="w-[281.063px]" />
+                <div className="absolute h-[78px] left-[32px] top-[167.99px] w-[281.063px]" data-name="Paragraph">
+                  <p className="absolute font-['Inter:Regular','Noto_Sans_KR:Regular',sans-serif] font-normal leading-[26px] left-0 not-italic text-[#4a5565] text-[16px] top-[-2.4px] w-[276px]">어떤 이미지가 어울릴까? 어디 이미지를 배치할까? 이미지를 고르다가 시간만 흘러가요</p>
+                </div>
+              </ContainerBackgroundImage7>
+            </div>
+            <div className="relative w-full px-4 min-h-[279.587px] md:absolute md:left-[757.33px] md:min-h-0 md:w-[346.675px] md:px-0 animate-result-card animate-result-card-delay-2 opacity-0">
+              <div className="absolute border-[0.8px] border-[rgba(229,231,235,0.5)] border-solid h-[279.587px] left-0 rounded-[24px] top-0 w-full md:w-[346.675px]" data-name="Container" style={{ backgroundImage: "linear-gradient(141.114deg, rgb(249, 250, 251) 0%, rgba(243, 244, 246, 0.5) 100%)" }}>
+                <div className="absolute content-stretch flex items-center justify-center left-[32px] px-[16px] rounded-[16px] shadow-[0px_10px_15px_0px_rgba(0,0,0,0.1),0px_4px_6px_0px_rgba(0,0,0,0.1)] size-[64px] top-[32px]" data-name="Container" style={{ backgroundImage: "linear-gradient(135deg, rgb(173, 70, 255) 0%, rgb(142, 81, 255) 100%)" }}>
+                  <BackgroundImage>
+                    <path d={svgPaths.p1dee4500} id="Vector" stroke="var(--stroke-0, white)" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.66667" />
+                    <path d="M20 12L12 20" id="Vector_2" stroke="var(--stroke-0, white)" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.66667" />
+                    <path d="M12 12L20 20" id="Vector_3" stroke="var(--stroke-0, white)" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.66667" />
+                  </BackgroundImage>
+                </div>
+                <HeadingBackgroundImageAndText text="결국 포기" additionalClassNames="w-[281.075px]" />
+                <div className="absolute h-[52px] left-[32px] top-[167.99px] w-[281.075px]" data-name="Paragraph">
+                  <p className="absolute font-['Inter:Regular','Noto_Sans_KR:Regular',sans-serif] font-normal leading-[26px] left-0 not-italic text-[#4a5565] text-[16px] top-[-2.4px] w-[279px]">완벽하게 만들려다 번아웃... 결국 초안만 쌓여가고 포스팅은 미뤄지기만 해요</p>
+                </div>
               </div>
             </div>
           </div>
@@ -1013,7 +1019,7 @@ export default function LandingPageDesignRequest() {
                 </div>
               </div>
             </div>
-            <div className="absolute bg-gradient-to-b content-stretch flex from-[#8a2be2] gap-[16.647px] h-[68px] items-center left-0 pl-[40px] rounded-[16px] shadow-[0px_25px_50px_0px_rgba(173,70,255,0.5)] to-[#007bff] top-[440.1px] w-[268.663px]" data-name="Button">
+            <div className="absolute bg-gradient-to-b content-stretch flex from-[#8a2be2] gap-[16.647px] h-[68px] items-center left-0 pl-[40px] rounded-[16px] shadow-[0px_25px_50px_0px_rgba(173,70,255,0.5)] to-[#007bff] top-[440.1px] w-[268.663px] action-btn-hover cursor-pointer" data-name="Button">
               <BackgroundImage3 additionalClassNames="h-[28px] w-[156.663px]">
                 <p className="-translate-x-1/2 absolute font-['Inter:Semi_Bold','Noto_Sans_KR:Bold',sans-serif] font-semibold leading-[28px] left-[78px] not-italic text-[18px] text-center text-white top-[-0.6px] whitespace-nowrap">지금 바로 체험하기</p>
               </BackgroundImage3>
@@ -1274,7 +1280,7 @@ export default function LandingPageDesignRequest() {
                 <BackgroundImage3 additionalClassNames="h-[24px] w-[64px]">
                   <p className="-translate-x-1/2 absolute font-['Inter:Medium','Noto_Sans_KR:Medium',sans-serif] font-medium leading-[24px] left-[32.5px] not-italic text-[#364153] text-[16px] text-center top-[-2.2px] whitespace-nowrap">체험하기</p>
                 </BackgroundImage3>
-                <div className="bg-gradient-to-b flex-[1_0_0] from-[#8a2be2] h-[44px] min-h-px min-w-px relative rounded-[26843500px] to-[#007bff]" data-name="Button">
+                <div className="bg-gradient-to-b flex-[1_0_0] from-[#8a2be2] h-[44px] min-h-px min-w-px relative rounded-[26843500px] to-[#007bff] action-btn-hover cursor-pointer" data-name="Button">
                   <div className="bg-clip-padding border-0 border-[transparent] border-solid relative size-full">
                     <p className="-translate-x-1/2 absolute font-['Inter:Medium','Noto_Sans_KR:Medium',sans-serif] font-medium leading-[24px] left-[56.5px] not-italic text-[16px] text-center text-white top-[7.8px] whitespace-nowrap">사전예약</p>
                   </div>
