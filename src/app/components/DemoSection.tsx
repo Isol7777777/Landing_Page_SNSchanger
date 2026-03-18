@@ -1,19 +1,81 @@
 import { motion, AnimatePresence } from "motion/react";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import svgPaths from "../../imports/svg-eir802r15e";
 import svgPathsResult from "../../imports/svg-rtrsvnnyqs";
 import imgImageSunset from "../../assets/demo-sunset-e25b65c9.png";
+import { transformText, type DualTransformResult } from "../../lib/gemini";
+import {
+  fetchImagesFromSupabaseByKeywords,
+  pickBestAssetFromKeywords,
+  pickBestFromDummyDb,
+  placeholderImage,
+  type ImageAsset,
+} from "../../lib/imageMatch";
 
 export function DemoSection() {
   const [activeTab, setActiveTab] = useState<"instagram" | "twitter">("instagram");
   const [isConverted, setIsConverted] = useState(false);
+  const [inputText, setInputText] = useState("");
+  const [isTransforming, setIsTransforming] = useState(false);
+  const [transformError, setTransformError] = useState<string | null>(null);
+  const [transformResult, setTransformResult] = useState<DualTransformResult | null>(null);
+  const [supabaseAssets, setSupabaseAssets] = useState<ImageAsset[] | null>(null);
 
-  const handleConvert = () => {
-    setIsConverted(true);
+  const keywords = transformResult?.keywords ?? [];
+
+  const dummyBest = useMemo(() => pickBestFromDummyDb(keywords), [keywords]);
+  const supabaseBest = useMemo(() => {
+    if (!supabaseAssets?.length) return null;
+    return pickBestAssetFromKeywords(keywords, supabaseAssets);
+  }, [keywords, supabaseAssets]);
+
+  const best = supabaseBest ?? dummyBest;
+  const twitterImageSrc = best?.twitter ?? placeholderImage.twitter;
+  const instagramImageSrc = best?.instagram ?? placeholderImage.instagram;
+  const bestAlt = best?.keyword ?? "기본";
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function load() {
+      setSupabaseAssets(null);
+      if (!keywords.length) return;
+      try {
+        const assets = await fetchImagesFromSupabaseByKeywords(keywords);
+        if (!cancelled) setSupabaseAssets(assets);
+      } catch {
+        // Supabase가 아직 준비되지 않았거나 테이블이 없으면 더미 매칭으로 폴백합니다.
+        if (!cancelled) setSupabaseAssets([]);
+      }
+    }
+
+    void load();
+    return () => {
+      cancelled = true;
+    };
+  }, [keywords]);
+
+  const handleConvert = async () => {
+    if (isTransforming) return;
+    setTransformError(null);
+    setIsTransforming(true);
+    try {
+      const result = await transformText(inputText);
+      setTransformResult(result);
+      setIsConverted(true);
+    } catch (e) {
+      const message = e instanceof Error ? e.message : "변환 중 오류가 발생했습니다.";
+      setTransformError(message);
+    } finally {
+      setIsTransforming(false);
+    }
   };
 
   const handleReset = () => {
     setIsConverted(false);
+    setTransformError(null);
+    setTransformResult(null);
+    setSupabaseAssets(null);
   };
 
   return (
@@ -158,19 +220,34 @@ export function DemoSection() {
                     >
                       <textarea
                         placeholder="오늘 있었던 일이나 떠오르는 생각을 3줄 내외로 적어보세요."
-                        className="w-full resize-none border-0 p-6 text-gray-400 outline-none placeholder:text-gray-400"
+                        value={inputText}
+                        onChange={(e) => setInputText(e.target.value)}
+                        className="w-full resize-none border-0 p-6 text-gray-900 outline-none placeholder:text-gray-400"
                         rows={6}
                       />
                     </motion.div>
 
+                    {transformError && (
+                      <div className="rounded-2xl border border-red-200 bg-red-50 px-5 py-4 text-sm text-red-700">
+                        {transformError}
+                      </div>
+                    )}
+
                     {/* Convert Button */}
                     <motion.button
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
+                      whileHover={!isTransforming ? { scale: 1.02 } : {}}
+                      whileTap={!isTransforming ? { scale: 0.98 } : {}}
                       onClick={handleConvert}
-                      className="group flex w-full items-center justify-center gap-3 rounded-2xl bg-gradient-to-b from-purple-600 to-blue-500 px-8 py-5 font-semibold text-white shadow-xl shadow-purple-500/30 transition-shadow hover:shadow-2xl hover:shadow-purple-500/40"
+                      disabled={isTransforming || !inputText.trim()}
+                      className={`group flex w-full items-center justify-center gap-3 rounded-2xl px-8 py-5 font-semibold text-white shadow-xl transition-shadow ${
+                        isTransforming || !inputText.trim()
+                          ? "bg-purple-400 shadow-purple-500/10 cursor-not-allowed"
+                          : "bg-gradient-to-b from-purple-600 to-blue-500 shadow-purple-500/30 hover:shadow-2xl hover:shadow-purple-500/40"
+                      }`}
                     >
-                      <span className="text-lg">탭해서 변환하기</span>
+                      <span className="text-lg">
+                        {isTransforming ? "변환 중..." : "탭해서 변환하기"}
+                      </span>
                       <motion.svg
                         className="size-5"
                         fill="none"
@@ -183,19 +260,15 @@ export function DemoSection() {
                           repeat: Infinity,
                           ease: "easeInOut"
                         }}
+                        style={isTransforming ? { opacity: 0.6 } : undefined}
                       >
-                        <g>
-                          <path d={svgPaths.p2328ed00} fill="white" />
-                          <path d={svgPaths.p2beca80} fill="white" />
-                          <path d={svgPaths.p1112f200} fill="white" />
-                          <path d={svgPaths.p5116f00} fill="white" />
-                          <path d={svgPaths.p12e69200} fill="white" />
-                          <path d={svgPaths.p3a71100} fill="white" />
-                          <path d={svgPaths.p2fa8b100} fill="white" />
-                          <path d={svgPaths.p3272cb80} fill="white" />
-                          <path d={svgPaths.p31a3cd80} fill="white" />
-                          <path d={svgPaths.p17f2e900} fill="white" />
-                        </g>
+                        <path
+                          d="M8 5.5L12.5 10L8 14.5"
+                          stroke="white"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
                       </motion.svg>
                     </motion.button>
                   </div>
@@ -264,17 +337,25 @@ export function DemoSection() {
 
                         {/* Post Content */}
                         <div className="mb-4 space-y-2 text-sm text-gray-900">
-                          <p>오늘 퇴근길에 본 노을이 진짜 미쳤다. 근데 핸드폰 배터리가 1%라 사진을 못 찍음...</p>
-                          <p>결국 뇌에만 저장하고 옴 ㅋㅋㅋ</p>
+                          {(transformResult?.twitter ?? "")
+                            .split("\n")
+                            .map((line: string) => line.trim())
+                            .filter(Boolean)
+                            .map((line: string, idx: number) => (
+                              <p key={idx}>{line}</p>
+                            ))}
                         </div>
 
                         {/* Post Image */}
-                        <img 
-                          src={imgImageSunset} 
-                          alt="Sunset" 
-                          className="mb-4 w-full rounded-2xl object-cover"
-                          style={{ aspectRatio: "16/9" }}
-                        />
+                        <div className="mb-4 overflow-hidden rounded-2xl border border-gray-100 bg-white">
+                          <img
+                            src={twitterImageSrc}
+                            alt={bestAlt}
+                            className="w-full object-cover"
+                            style={{ aspectRatio: "16/9" }}
+                            loading="lazy"
+                          />
+                        </div>
 
                         {/* Timestamp */}
                         <p className="mb-3 text-sm text-gray-500">2시간 전</p>
@@ -321,9 +402,9 @@ export function DemoSection() {
                       className="flex w-full items-center justify-center gap-2 rounded-2xl bg-black px-6 py-4 font-semibold text-white shadow-lg transition-shadow hover:shadow-xl"
                     >
                       <svg className="size-5" fill="none" viewBox="0 0 20 20">
-                        <path d={svgPathsResult.p2ffa5d80} stroke="white" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.66667" />
+                        <path d={svgPathsResult.p1bb63c00} fill="white" />
                       </svg>
-                      <span>트위터로 공유</span>
+                      <span>X로 공유</span>
                     </motion.button>
                   </motion.div>
 
@@ -363,12 +444,15 @@ export function DemoSection() {
                         </div>
 
                         {/* Post Image */}
-                        <img 
-                          src={imgImageSunset} 
-                          alt="Sunset" 
-                          className="w-full object-cover"
-                          style={{ aspectRatio: "1/1" }}
-                        />
+                        <div className="overflow-hidden border-b border-gray-100 bg-white">
+                          <img
+                            src={instagramImageSrc}
+                            alt={bestAlt}
+                            className="w-full object-cover"
+                            style={{ aspectRatio: "1/1" }}
+                            loading="lazy"
+                          />
+                        </div>
 
                         {/* Post Actions */}
                         <div className="space-y-3 p-4">
@@ -393,17 +477,10 @@ export function DemoSection() {
                           <p className="text-sm font-semibold text-gray-900">좋아요 892개</p>
 
                           {/* Caption */}
-                          <div className="text-sm">
+                          <div className="text-sm whitespace-pre-wrap text-gray-900">
                             <span className="font-semibold text-gray-900">taptap_user</span>
-                            <span className="ml-2 text-gray-900">
-                              퇴근길의 작은 위로, 하늘이 만들어낸 오늘의 감동을 혼자만 즐기고 왔어요.
-                            </span>
+                            <span className="ml-2">{transformResult?.instagram ?? ""}</span>
                           </div>
-
-                          {/* Hashtags */}
-                          <p className="text-sm text-blue-600">
-                            #일상 #노을 #퇴근길 #감성 #하늘사진그램 #daily #sunset #mood
-                          </p>
 
                           {/* Timestamp */}
                           <p className="text-xs text-gray-500">2시간 전</p>

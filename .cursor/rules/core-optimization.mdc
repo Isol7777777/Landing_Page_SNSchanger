@@ -1,0 +1,30 @@
+---
+description: Core performance/quality rules for this project
+alwaysApply: true
+---
+
+# Core optimization rules
+
+- Keep changes **small and reversible**. Avoid large rewrites; prefer targeted refactors.
+- Prefer **simple data flow** over cleverness. Keep state local; lift only when shared.
+- Avoid introducing **new heavy dependencies** unless necessary; prefer existing stack (`vite`, `motion/react`, `tailwindcss`, `lucide-react`).
+- Never paste tool/debug output into source files (e.g., “File not found”, UUID logs). Source files must remain valid TS/TSX/CSS/JSON.
+- Use **stable imports**. Avoid Figma-only schemes like `figma:asset/...` — use repo assets under `src/assets/`.
+
+## Performance guardrails
+
+- Avoid expensive work in render:
+  - Precompute static arrays/constants **outside** components.
+  - Avoid creating new objects/arrays/functions in JSX when it impacts children; extract to constants or use callbacks where needed.
+- Animations:
+  - Prefer CSS transforms/opacity; keep motion props minimal.
+  - Avoid animating layout-affecting properties (width/height/left/top) when possible.
+- Images:
+  - Use `loading="lazy"` for non-hero images.
+  - Always set an aspect ratio to prevent layout shift.
+
+## DX / correctness
+
+- Keep TypeScript strict. Don’t use `any` unless unavoidable; prefer typed unions for UI state.
+- Make IDs/anchors explicit for in-page navigation. Use `id="...-section"` on section roots.
+

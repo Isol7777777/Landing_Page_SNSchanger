@@ -4,10 +4,12 @@ import { SolutionSection } from "./components/SolutionSection";
 import { DemoSection } from "./components/DemoSection";
 import { CTASection } from "./components/CTASection";
 import { Footer } from "./components/Footer";
+import { Header } from "./components/Header";
 
 export default function App() {
   return (
     <div className="min-h-screen overflow-x-hidden bg-white">
+      <Header />
       <Hero />
       <ProblemSection />
       <SolutionSection />

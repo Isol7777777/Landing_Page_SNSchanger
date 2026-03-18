@@ -1,0 +1,35 @@
+---
+description: React + UI performance patterns (motion, Tailwind)
+globs: src/**/*.tsx
+alwaysApply: false
+---
+
+# React UI performance patterns
+
+## Component boundaries
+
+- Split UI into small components only when it reduces re-renders or complexity.
+- Keep "section" components (`Hero`, `ProblemSection`, `SolutionSection`, `DemoSection`, `CTASection`, `Footer`) mostly presentational.
+- Put side-effects / IO (API calls, Supabase queries, html2canvas) into dedicated hooks or service modules under `src/`.
+
+## State & rendering
+
+- Prefer a single source of truth:
+  - `DemoSection` should own its demo state; avoid duplicating derived state.
+- Memoize only when it matters:
+  - Use `useMemo`/`useCallback` for props passed to memoized children or heavy computations.
+- Avoid inline `style={{ ... }}` objects in hot paths; extract to constants unless the values truly change.
+
+## Motion / animation
+
+- Use `motion/react` (already in project) consistently.
+- Keep `AnimatePresence` scopes narrow. Don’t wrap large trees if only a small sub-tree needs enter/exit.
+- Prefer `viewport={{ once: true }}` to reduce repeated animation work unless the design requires it.
+
+## Assets & icons
+
+- Use SVG paths from `src/imports/*.ts` only when necessary; otherwise prefer `lucide-react` for consistency.
+- Ensure `viewBox` matches icon path coordinates to avoid sizing/blur issues:
+  - If `viewBox="0 0 20 20"`, use 20x20 paths.
+  - If `viewBox="0 0 24 24"`, use 24x24 paths.
+

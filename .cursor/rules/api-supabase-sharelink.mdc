@@ -1,0 +1,41 @@
+---
+description: API calls, Supabase image matching, share-link encoding (performance + safety)
+globs: src/**/*.{ts,tsx}
+alwaysApply: false
+---
+
+# API / Supabase / share-link rules (for upcoming DemoSection features)
+
+## API integration (Step 1)
+
+- Centralize API calls in `src/lib/` or `src/services/` (create if missing).
+- Always implement:
+  - timeouts (AbortController)
+  - clear error states for UI
+  - request de-duplication where appropriate (avoid double-submit)
+- Never hardcode secrets in the frontend. Use Vite env vars (`import.meta.env`) for public config only.
+
+## Supabase image matching (Step 2)
+
+- Keep Supabase client initialization in a single module.
+- Query only needed fields; paginate/limit results.
+- Cache results in memory (per session) for repeated keyword searches.
+
+## Share link without DB (Step 3)
+
+- Keep URLs small:
+  - compress/minify payload (short keys, omit defaults)
+  - prefer base64url over raw JSON when embedding
+- Validate and safely parse URL params. Fail gracefully to defaults.
+
+## html2canvas export (Step 4)
+
+- Render a dedicated export container with stable dimensions.
+- Avoid capturing large offscreen DOM trees; capture only the target node.
+- Defer heavy work (capture) until user action; show a loading state.
+
+## Exit prevention + SNS share (Step 5)
+
+- Warn only when there is unsaved/unsent user input.
+- Use the Web Share API when available; provide a fallback copy-to-clipboard.
+

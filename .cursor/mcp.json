@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "supabase": {
+      "args": ["--project-ref=bdifkxfneohpgpbltoao"],
+      "env": {
+        "SUPABASE_URL": "https://bdifkxfneohpgpbltoao.supabase.co"
+      }
+    }
+  }
+}
+
