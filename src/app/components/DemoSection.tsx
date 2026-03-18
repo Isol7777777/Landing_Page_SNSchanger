@@ -1,51 +1,93 @@
 import { motion, AnimatePresence } from "motion/react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { domToPng } from "modern-screenshot";
 import svgPaths from "../../imports/svg-eir802r15e";
 import svgPathsResult from "../../imports/svg-rtrsvnnyqs";
-import imgImageSunset from "../../assets/demo-sunset-e25b65c9.png";
 import { transformText, type DualTransformResult } from "../../lib/gemini";
 import {
-  fetchImagesFromSupabaseByKeywords,
-  pickBestAssetFromKeywords,
-  pickBestFromDummyDb,
+  fetchPlatformImagesForKeywords,
   placeholderImage,
-  type ImageAsset,
+  type PlatformImagesResult,
 } from "../../lib/imageMatch";
+import { createSharedLink, fetchSharedLink } from "../../lib/shareService";
 
 export function DemoSection() {
+  const sectionRef = useRef<HTMLElement | null>(null);
   const [activeTab, setActiveTab] = useState<"instagram" | "twitter">("instagram");
   const [isConverted, setIsConverted] = useState(false);
   const [inputText, setInputText] = useState("");
   const [isTransforming, setIsTransforming] = useState(false);
   const [transformError, setTransformError] = useState<string | null>(null);
   const [transformResult, setTransformResult] = useState<DualTransformResult | null>(null);
-  const [supabaseAssets, setSupabaseAssets] = useState<ImageAsset[] | null>(null);
+  const [platformImages, setPlatformImages] = useState<PlatformImagesResult | null>(null);
+  const [imageError, setImageError] = useState<string | null>(null);
+  const [isLoadingImages, setIsLoadingImages] = useState(false);
+  const [shareStatus, setShareStatus] = useState<string | null>(null);
+  const [isFromSharedLink, setIsFromSharedLink] = useState(false);
+  const [isSavingImage, setIsSavingImage] = useState(false);
 
   const keywords = transformResult?.keywords ?? [];
 
-  const dummyBest = useMemo(() => pickBestFromDummyDb(keywords), [keywords]);
-  const supabaseBest = useMemo(() => {
-    if (!supabaseAssets?.length) return null;
-    return pickBestAssetFromKeywords(keywords, supabaseAssets);
-  }, [keywords, supabaseAssets]);
+  const twitterImageSrc = platformImages?.twitter.url ?? placeholderImage.twitter;
+  const instagramImageSrc =
+    platformImages?.instagram.url ?? placeholderImage.instagram;
+  const instagramAttribution = platformImages?.instagram.attribution ?? null;
+  const bestAlt = platformImages?.selected.matchedDbKeyword
+    ? platformImages.selected.matchedDbKeyword
+    : platformImages?.selected.inputKeyword || "기본";
 
-  const best = supabaseBest ?? dummyBest;
-  const twitterImageSrc = best?.twitter ?? placeholderImage.twitter;
-  const instagramImageSrc = best?.instagram ?? placeholderImage.instagram;
-  const bestAlt = best?.keyword ?? "기본";
+  // 초기 로드 시 URL의 ?v= 파라미터가 있으면 Supabase에서 결과 복원
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    const sharedId = url.searchParams.get("v");
+    if (!sharedId) return;
+
+    let cancelled = false;
+
+    async function loadShared(id: string) {
+      try {
+        const payload = await fetchSharedLink(id);
+        if (!payload || cancelled) return;
+        setTransformResult(payload);
+        setIsConverted(true);
+        setIsFromSharedLink(true);
+
+        // 결과 섹션으로 자동 스크롤
+        setTimeout(() => {
+          sectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+        }, 0);
+      } catch (e) {
+        const msg =
+          e instanceof Error
+            ? e.message
+            : "공유 링크를 불러오는 중 오류가 발생했습니다.";
+        setShareStatus(msg);
+      }
+    }
+
+    void loadShared(sharedId);
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
 
     async function load() {
-      setSupabaseAssets(null);
+      setPlatformImages(null);
+      setImageError(null);
       if (!keywords.length) return;
       try {
-        const assets = await fetchImagesFromSupabaseByKeywords(keywords);
-        if (!cancelled) setSupabaseAssets(assets);
-      } catch {
-        // Supabase가 아직 준비되지 않았거나 테이블이 없으면 더미 매칭으로 폴백합니다.
-        if (!cancelled) setSupabaseAssets([]);
+        setIsLoadingImages(true);
+        const result = await fetchPlatformImagesForKeywords(keywords);
+        if (!cancelled) setPlatformImages(result);
+      } catch (e) {
+        const msg =
+          e instanceof Error ? e.message : "이미지 매칭 중 오류가 발생했습니다.";
+        if (!cancelled) setImageError(msg);
+      } finally {
+        if (!cancelled) setIsLoadingImages(false);
       }
     }
 
@@ -75,12 +117,83 @@ export function DemoSection() {
     setIsConverted(false);
     setTransformError(null);
     setTransformResult(null);
-    setSupabaseAssets(null);
+    setPlatformImages(null);
+    setImageError(null);
+    setIsLoadingImages(false);
+    setShareStatus(null);
+    setIsFromSharedLink(false);
+  };
+
+  const handleSaveImage = async () => {
+    if (!isConverted) return;
+    const target = document.getElementById("capture-area");
+    if (!target) {
+      setShareStatus("캡처할 영역을 찾을 수 없어요.");
+      return;
+    }
+    try {
+      setIsSavingImage(true);
+
+      // modern-screenshot 사용: scale=2, 흰색 배경 강제
+      const dataUrl = await domToPng(target, {
+        scale: 2,
+        backgroundColor: "#ffffff",
+      }).catch((e: unknown) => {
+        console.error("[modern-screenshot] capture failed", e);
+        throw e;
+      });
+
+      if (!dataUrl) {
+        setShareStatus("이미지 저장에 실패했어요.");
+        return;
+      }
+
+      const url = dataUrl;
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "taptap-result.png";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    } catch (e) {
+      console.error("[modern-screenshot] capture error", e);
+      const msg =
+        e instanceof Error ? e.message : "이미지 저장 중 오류가 발생했습니다.";
+      setShareStatus(msg);
+    } finally {
+      setIsSavingImage(false);
+    }
+  };
+
+  const handleShareLink = async () => {
+    if (!transformResult) {
+      setShareStatus("먼저 변환을 완료해 주세요.");
+      return;
+    }
+    try {
+      const id = await createSharedLink(transformResult);
+      const url = new URL(window.location.href);
+      url.searchParams.set("v", id);
+      const shareUrl = url.toString();
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(shareUrl);
+        setShareStatus("공유 링크가 복사되었습니다!");
+      } else {
+        // 클립보드 사용이 불가능한 환경에서는 단순 alert로 대체
+        setShareStatus("이 브라우저에서는 자동 복사가 지원되지 않아요.");
+      }
+    } catch (e) {
+      const msg =
+        e instanceof Error ? e.message : "공유 링크 생성 중 오류가 발생했습니다.";
+      setShareStatus(msg);
+    }
   };
 
   return (
     <section
       id="demo-section"
+      ref={sectionRef as any}
       className="relative bg-white px-4 py-16 md:px-8 md:py-24 lg:px-16"
     >
       <div className="mx-auto max-w-7xl">
@@ -296,7 +409,7 @@ export function DemoSection() {
               </div>
 
               {/* Results Grid */}
-              <div className="mx-auto max-w-7xl">
+              <div className="mx-auto max-w-7xl" id="capture-area">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
                   {/* Twitter Result */}
                   <motion.div
@@ -358,7 +471,7 @@ export function DemoSection() {
                         </div>
 
                         {/* Timestamp */}
-                        <p className="mb-3 text-sm text-gray-500">2시간 전</p>
+                        <p className="mb-3 text-sm text-gray-500">방금 전</p>
 
                         {/* Engagement Stats */}
                         <div className="flex items-center gap-6 border-t border-gray-100 pt-3 text-sm text-gray-500">
@@ -453,6 +566,40 @@ export function DemoSection() {
                             loading="lazy"
                           />
                         </div>
+                        {instagramAttribution && (
+                          <div className="border-b border-gray-100 px-4 py-3 text-xs text-gray-500">
+                            <span>Photo by </span>
+                            {instagramAttribution.authorUrl ? (
+                              <a
+                                className="font-semibold text-gray-600 hover:text-gray-800"
+                                href={instagramAttribution.authorUrl}
+                                target="_blank"
+                                rel="noreferrer noopener"
+                              >
+                                {instagramAttribution.authorName}
+                              </a>
+                            ) : (
+                              <span className="font-semibold text-gray-600">
+                                {instagramAttribution.authorName}
+                              </span>
+                            )}
+                            <span> on </span>
+                            {instagramAttribution.photoUrl ? (
+                              <a
+                                className="font-semibold text-gray-600 hover:text-gray-800"
+                                href={instagramAttribution.photoUrl}
+                                target="_blank"
+                                rel="noreferrer noopener"
+                              >
+                                Unsplash
+                              </a>
+                            ) : (
+                              <span className="font-semibold text-gray-600">
+                                Unsplash
+                              </span>
+                            )}
+                          </div>
+                        )}
 
                         {/* Post Actions */}
                         <div className="space-y-3 p-4">
@@ -483,7 +630,7 @@ export function DemoSection() {
                           </div>
 
                           {/* Timestamp */}
-                          <p className="text-xs text-gray-500">2시간 전</p>
+                          <p className="text-xs text-gray-500">방금 전</p>
                         </div>
                       </div>
                     </div>
@@ -510,17 +657,20 @@ export function DemoSection() {
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
+                    onClick={handleSaveImage}
+                    disabled={isSavingImage}
                     className="flex items-center gap-2 rounded-2xl bg-gradient-to-b from-purple-600 to-blue-500 px-8 py-4 font-semibold text-white shadow-xl shadow-purple-500/30 transition-shadow hover:shadow-2xl hover:shadow-purple-500/40"
                   >
                     <svg className="size-5" fill="none" viewBox="0 0 24 24" stroke="white" strokeWidth="2">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v13m0 0l-4-4m4 4l4-4m6 5v3a2 2 0 01-2 2H4a2 2 0 01-2-2v-3" />
                     </svg>
-                    <span>바로 이미지 저장하기</span>
+                    <span>{isSavingImage ? "이미지 생성 중..." : "바로 이미지 저장하기"}</span>
                   </motion.button>
 
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
+                    onClick={handleShareLink}
                     className="flex items-center gap-2 rounded-2xl border-2 border-gray-300 bg-white px-8 py-4 font-semibold text-gray-700 transition-all hover:border-gray-400"
                   >
                     <svg className="size-5" fill="none" viewBox="0 0 26 26">
@@ -532,6 +682,21 @@ export function DemoSection() {
 
                 {/* Reset Button */}
                 <div className="mt-8 text-center">
+                  {imageError && (
+                    <div className="mx-auto mb-4 max-w-xl rounded-2xl border border-amber-200 bg-amber-50 px-5 py-4 text-sm text-amber-800">
+                      {imageError}
+                    </div>
+                  )}
+                  {isLoadingImages && (
+                    <p className="mb-3 text-sm text-gray-500">
+                      이미지 불러오는 중...
+                    </p>
+                  )}
+                  {shareStatus && (
+                    <p className="mb-3 text-sm text-gray-500">
+                      {shareStatus}
+                    </p>
+                  )}
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     onClick={handleReset}

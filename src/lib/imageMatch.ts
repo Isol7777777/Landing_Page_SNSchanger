@@ -1,38 +1,40 @@
-import defaultBg from "../assets/default-bg.svg";
-import cafe from "../assets/cafe.svg";
-import sunset from "../assets/sunset.svg";
 import { supabase } from "./supabaseClient";
+import defaultBg from "../assets/default-bg.svg";
+import { fetchTwitterGif16x9 } from "./giphyClient";
+import { fetchInstagramPhoto1x1, type UnsplashAttribution } from "./unsplashClient";
 
 /**
- * 더미 이미지 DB (Supabase 붙이기 전 개발용)
- * - 키워드(한글) -> 플랫폼별 이미지
+ * Placeholder (API 실패/매칭 실패 시)
  */
-export const imageDb: Record<string, { twitter: string; instagram: string }> = {
-  카페: { twitter: cafe, instagram: cafe },
-  노을: { twitter: sunset, instagram: sunset },
-  커피: { twitter: cafe, instagram: cafe },
-  디저트: { twitter: cafe, instagram: cafe },
-  석양: { twitter: sunset, instagram: sunset },
-  바다: { twitter: sunset, instagram: sunset },
-};
-
-export type PlatformImageUrls = { twitter: string; instagram: string };
-export type ImageAsset = { keyword: string } & PlatformImageUrls;
-
-export const placeholderImage: PlatformImageUrls = {
+export const placeholderImage = {
   twitter: defaultBg,
   instagram: defaultBg,
+} as const;
+
+export type KeywordMappingRow = {
+  keyword: string;
+  search_term_twitter: string | null;
+  search_term_instagram: string | null;
+};
+
+export type SelectedKeyword = {
+  inputKeyword: string;
+  matchedDbKeyword: string | null;
+};
+
+export type PlatformImagesResult = {
+  selected: SelectedKeyword;
+  searchTerms: { twitter: string; instagram: string };
+  twitter: { url: string };
+  instagram: { url: string; attribution: UnsplashAttribution | null };
+  usedFallback: { twitter: boolean; instagram: boolean };
 };
 
 function normalizeKeywords(keywords: string[]): string[] {
   return keywords.map((k) => k.trim()).filter(Boolean);
 }
 
-function scoreMatch(params: {
-  keywordIndex: number;
-  inputKeyword: string;
-  dbKeyword: string;
-}): number | null {
+function scoreMatch(params: { keywordIndex: number; inputKeyword: string; dbKeyword: string }): number | null {
   const { keywordIndex, inputKeyword, dbKeyword } = params;
   if (!inputKeyword || !dbKeyword) return null;
 
@@ -61,36 +63,36 @@ function pickRandomOne<T>(items: T[]): T {
 }
 
 /**
- * keywords + asset 후보들로부터 "단 하나"의 최적 매칭 asset을 선택합니다.
+ * keywords + DB keyword 후보들로부터 "단 하나"의 최적 키워드를 선택합니다.
  * - 완전 일치 우선
  * - 부분 일치 점수화 (앞쪽일수록 가산)
  * - 동점이면 랜덤 선택
  */
-export function pickBestAssetFromKeywords(
+export function pickBestDbKeywordFromKeywords(
   keywords: string[],
-  assets: ImageAsset[]
-): ImageAsset | null {
+  dbKeywords: string[]
+): { inputKeyword: string; dbKeyword: string } | null {
   const normalized = normalizeKeywords(keywords);
-  if (!normalized.length || !assets.length) return null;
+  if (!normalized.length || !dbKeywords.length) return null;
 
   let bestScore = -Infinity;
-  let bestCandidates: ImageAsset[] = [];
+  let bestCandidates: Array<{ inputKeyword: string; dbKeyword: string }> = [];
 
-  for (const asset of assets) {
+  for (const dbKeyword of dbKeywords) {
     for (let i = 0; i < normalized.length; i++) {
       const inputKeyword = normalized[i];
       const s = scoreMatch({
         keywordIndex: i,
         inputKeyword,
-        dbKeyword: asset.keyword,
+        dbKeyword,
       });
       if (s === null) continue;
 
       if (s > bestScore) {
         bestScore = s;
-        bestCandidates = [asset];
+        bestCandidates = [{ inputKeyword, dbKeyword }];
       } else if (s === bestScore) {
-        bestCandidates.push(asset);
+        bestCandidates.push({ inputKeyword, dbKeyword });
       }
     }
   }
@@ -98,70 +100,160 @@ export function pickBestAssetFromKeywords(
   return bestCandidates.length ? pickRandomOne(bestCandidates) : null;
 }
 
-export function pickBestFromDummyDb(keywords: string[]): ImageAsset | null {
-  const assets: ImageAsset[] = Object.entries(imageDb).map(
-    ([keyword, urls]) => ({
-      keyword,
-      twitter: urls.twitter,
-      instagram: urls.instagram,
-    })
-  );
-  return pickBestAssetFromKeywords(keywords, assets);
+export function pickBestInputKeyword(keywords: string[]): string | null {
+  const normalized = normalizeKeywords(keywords);
+  return normalized.length ? normalized[0] : null;
 }
 
 /**
- * Supabase DB에서 keyword -> image URL을 조회합니다.
- *
- * 테이블 예시: public.image_assets
- * - keyword (text, primary key)
- * - url_twitter (text)
- * - url_instagram (text)
+ * Supabase `keyword_mappings`에서 키워드 -> 플랫폼별 search_term을 조회합니다.
+ * 컬럼:
+ * - keyword (text)
+ * - search_term_twitter (text)
+ * - search_term_instagram (text)
  */
-export async function fetchImagesFromSupabaseByKeywords(
-  keywords: string[],
-  options?: { table?: string; maxRows?: number }
-): Promise<ImageAsset[]> {
-  const table = options?.table?.trim() || "image_assets";
-  const maxRows = options?.maxRows ?? 500;
-  const uniq = Array.from(new Set(normalizeKeywords(keywords)));
+export async function fetchKeywordMappingsCandidates(params: {
+  keywords: string[];
+  table?: string;
+  maxRows?: number;
+}): Promise<KeywordMappingRow[]> {
+  const table = params.table?.trim() || "keyword_mappings";
+  const maxRows = params.maxRows ?? 500;
+  const uniq = Array.from(new Set(normalizeKeywords(params.keywords)));
   if (!uniq.length) return [];
 
-  const { data, error } = await supabase
+  // 1) 완전 일치 후보 우선 조회
+  const exact = await supabase
     .from(table)
-    .select("keyword,url_twitter,url_instagram")
-    // 부분 일치를 점수화해야 해서, 후보 풀을 조금 넓게 잡고 클라이언트에서 선택합니다.
-    .limit(maxRows);
+    .select("keyword,search_term_twitter,search_term_instagram")
+    .in("keyword", uniq);
 
-  if (error) {
-    throw new Error(error.message);
+  if (exact.error) {
+    throw new Error(exact.error.message);
   }
 
-  const rows = (data ?? []) as Array<{
+  const exactRows = (exact.data ?? []) as Array<{
     keyword: unknown;
-    url_twitter: unknown;
-    url_instagram: unknown;
+    search_term_twitter: unknown;
+    search_term_instagram: unknown;
   }>;
 
-  // Supabase에서 전부 가져와도, pickBestAssetFromKeywords가 실제로 매칭되는 것만 고려합니다.
-  // (불필요한 렌더링 방지용으로, 최소한의 유효성은 여기서 체크)
-  const assets: ImageAsset[] = rows
-    .filter(
-      (r) =>
-        typeof r.keyword === "string" &&
-        typeof r.url_twitter === "string" &&
-        typeof r.url_instagram === "string"
-    )
+  const normalizedExact = exactRows
+    .filter((r) => typeof r.keyword === "string")
     .map((r) => ({
       keyword: r.keyword,
-      twitter: r.url_twitter,
-      instagram: r.url_instagram,
+      search_term_twitter:
+        typeof r.search_term_twitter === "string" ? r.search_term_twitter : null,
+      search_term_instagram:
+        typeof r.search_term_instagram === "string" ? r.search_term_instagram : null,
     }));
 
-  // 키워드 후보가 많을 때, 완전 무관한 row들을 빠르게 제외
-  const maybeRelevant = assets.filter((a) =>
-    uniq.some((k) => k.includes(a.keyword) || a.keyword.includes(k))
-  );
+  if (normalizedExact.length) return normalizedExact;
 
-  return maybeRelevant.length ? maybeRelevant : assets;
+  // 2) 부분 일치 후보 확보를 위해 제한된 범위로 가져와서 클라이언트 점수화
+  const all = await supabase
+    .from(table)
+    .select("keyword,search_term_twitter,search_term_instagram")
+    .limit(maxRows);
+
+  if (all.error) {
+    throw new Error(all.error.message);
+  }
+
+  const allRows = (all.data ?? []) as Array<{
+    keyword: unknown;
+    search_term_twitter: unknown;
+    search_term_instagram: unknown;
+  }>;
+
+  return allRows
+    .filter((r) => typeof r.keyword === "string")
+    .map((r) => ({
+      keyword: r.keyword,
+      search_term_twitter:
+        typeof r.search_term_twitter === "string" ? r.search_term_twitter : null,
+      search_term_instagram:
+        typeof r.search_term_instagram === "string" ? r.search_term_instagram : null,
+    }));
+}
+
+export function resolveSearchTerms(params: {
+  selectedKeyword: string;
+  mapping: KeywordMappingRow | null;
+}): { twitter: string; instagram: string } {
+  const base = params.selectedKeyword.trim();
+  const mapping = params.mapping;
+  const twitter = (mapping?.search_term_twitter ?? "").trim() || base;
+  const instagram = (mapping?.search_term_instagram ?? "").trim() || base;
+  return { twitter, instagram };
+}
+
+export async function fetchPlatformImagesForKeywords(
+  keywords: string[]
+): Promise<PlatformImagesResult> {
+  const normalized = normalizeKeywords(keywords);
+  const fallbackSelected = pickBestInputKeyword(normalized) ?? "";
+
+  let mapping: KeywordMappingRow | null = null;
+  let selected: SelectedKeyword = {
+    inputKeyword: fallbackSelected,
+    matchedDbKeyword: null,
+  };
+
+  try {
+    const candidates = await fetchKeywordMappingsCandidates({ keywords: normalized });
+    const best = pickBestDbKeywordFromKeywords(
+      normalized,
+      candidates.map((c) => c.keyword)
+    );
+
+    if (best) {
+      selected = { inputKeyword: best.inputKeyword, matchedDbKeyword: best.dbKeyword };
+      mapping = candidates.find((c) => c.keyword === best.dbKeyword) ?? null;
+    }
+  } catch {
+    // Supabase 조회 실패 시에도 API 소싱은 원본 키워드로 진행
+  }
+
+  const chosenKeyword = selected.inputKeyword || fallbackSelected;
+  const searchTerms = resolveSearchTerms({
+    selectedKeyword: chosenKeyword || (normalized[0] ?? ""),
+    mapping,
+  });
+
+  let twitterUrl = placeholderImage.twitter;
+  let instagramUrl = placeholderImage.instagram;
+  let instagramAttribution: UnsplashAttribution | null = null;
+  let usedFallbackTwitter = true;
+  let usedFallbackInstagram = true;
+
+  try {
+    const gif = await fetchTwitterGif16x9({ query: searchTerms.twitter });
+    if (gif?.url) {
+      twitterUrl = gif.url;
+      usedFallbackTwitter = false;
+    }
+  } catch {
+    // fallback 유지
+  }
+
+  try {
+    const photo = await fetchInstagramPhoto1x1({ query: searchTerms.instagram });
+    if (photo?.url) {
+      instagramUrl = photo.url;
+      instagramAttribution = photo.attribution;
+      usedFallbackInstagram = false;
+    }
+  } catch {
+    // fallback 유지
+  }
+
+  return {
+    selected,
+    searchTerms,
+    twitter: { url: twitterUrl },
+    instagram: { url: instagramUrl, attribution: instagramAttribution },
+    usedFallback: { twitter: usedFallbackTwitter, instagram: usedFallbackInstagram },
+  };
 }
 
