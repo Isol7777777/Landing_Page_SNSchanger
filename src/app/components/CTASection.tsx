@@ -24,6 +24,8 @@ export function CTASection() {
   const isSubmittable =
     agreements.age && agreements.privacy && phone.replace(/[^0-9]/g, "").length >= 10;
 
+  const allAgreed = agreements.age && agreements.privacy && agreements.marketing;
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!isSubmittable || isSubmitting) return;
@@ -93,6 +95,29 @@ export function CTASection() {
 
           {/* 약관 동의 */}
           <div className="space-y-4 bg-white/5 rounded-2xl p-6 border border-white/10">
+            {/* 모두 동의 (개별 동의 체크박스와 동일한 UI) */}
+            <label className="flex items-center gap-3 cursor-pointer">
+              <input
+                type="checkbox"
+                className="hidden"
+                checked={allAgreed}
+                onChange={() => {
+                  const next = !allAgreed;
+                  setAgreements({ age: next, privacy: next, marketing: next });
+                }}
+              />
+              <div
+                className={`size-6 rounded-md border-2 flex items-center justify-center transition-all ${
+                  allAgreed ? "bg-white border-white" : "border-white/30"
+                }`}
+              >
+                {allAgreed && <Check className="size-4 text-purple-600" />}
+              </div>
+              <span className="text-white font-bold leading-relaxed">
+                모두 동의합니다.
+              </span>
+            </label>
+
             {/* 만 14세 이상 */}
             <label className="flex items-center gap-3 cursor-pointer group">
               <input

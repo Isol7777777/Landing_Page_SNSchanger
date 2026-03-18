@@ -126,18 +126,80 @@ export function DemoSection() {
 
   const handleSaveImage = async () => {
     if (!isConverted) return;
-    const target = document.getElementById("capture-area");
-    if (!target) {
-      setShareStatus("캡처할 영역을 찾을 수 없어요.");
+    const captureRoot = document.getElementById("capture-area");
+    const twitterCard = captureRoot?.querySelector(
+      ".twitter-card"
+    ) as HTMLElement | null;
+    const instaCard = captureRoot?.querySelector(
+      ".insta-card"
+    ) as HTMLElement | null;
+
+    if (!twitterCard || !instaCard) {
+      setShareStatus("캡처할 카드 영역을 찾을 수 없어요.");
       return;
     }
+
+    const backgroundVar = getComputedStyle(document.documentElement).getPropertyValue(
+      "--background"
+    );
+    const backgroundColor = backgroundVar?.trim() || "#ffffff";
+
+    const twRect = twitterCard.getBoundingClientRect();
+    const inRect = instaCard.getBoundingClientRect();
+
+    // 비교 캡처용 가상 컨테이너를 만들어서 두 카드만 가로로 붙입니다.
+    // (DOM을 직접 수정하지 않기 위해 cloneNode를 사용합니다.)
+    const wrapper = document.createElement("div");
+    wrapper.style.display = "flex";
+    wrapper.style.flexDirection = "row";
+    // 카드를 늘려서 비율이 깨지지 않게 top 기준으로만 정렬합니다.
+    wrapper.style.alignItems = "flex-start";
+    wrapper.style.gap = "0";
+    wrapper.style.backgroundColor = backgroundColor;
+    wrapper.style.position = "fixed";
+    // 화면 바깥으로 빼면 bounding rect 계산이 0이 되는 케이스가 있어,
+    // 캡처 품질을 위해 좌상단에 잠깐 올립니다.
+    wrapper.style.left = "0px";
+    wrapper.style.top = "0px";
+    wrapper.style.zIndex = "999999";
+    wrapper.style.pointerEvents = "none";
+    wrapper.style.padding = "0";
+    wrapper.style.margin = "0";
+    wrapper.style.overflow = "hidden";
+    wrapper.style.width = `${Math.ceil(twRect.width + inRect.width)}px`;
+    wrapper.style.height = `${Math.ceil(Math.max(twRect.height, inRect.height))}px`;
+
+    const twClone = twitterCard.cloneNode(true) as HTMLElement;
+    const inClone = instaCard.cloneNode(true) as HTMLElement;
+    // motion/레이아웃으로 인한 transform/scale이 캡처 시 과하게 적용되는 걸 방지합니다.
+    twClone.style.transform = "none";
+    inClone.style.transform = "none";
+    twClone.style.flex = "0 0 auto";
+    inClone.style.flex = "0 0 auto";
+    twClone.style.width = `${Math.ceil(twRect.width)}px`;
+    inClone.style.width = `${Math.ceil(inRect.width)}px`;
+    twClone.style.height = `${Math.ceil(twRect.height)}px`;
+    inClone.style.height = `${Math.ceil(inRect.height)}px`;
+
+    wrapper.appendChild(twClone);
+    wrapper.appendChild(inClone);
+
     try {
       setIsSavingImage(true);
 
-      // modern-screenshot 사용: scale=2, 흰색 배경 강제
-      const dataUrl = await domToPng(target, {
+      document.body.appendChild(wrapper);
+
+      const dataUrl = await domToPng(wrapper, {
         scale: 2,
-        backgroundColor: "#ffffff",
+        backgroundColor,
+        // modern-screenshot은 useCORS 옵션이 따로 없어서,
+        // fetch request mode에 CORS 힌트를 줍니다.
+        fetch: {
+          requestInit: {
+            mode: "cors",
+            cache: "no-cache",
+          },
+        },
       }).catch((e: unknown) => {
         console.error("[modern-screenshot] capture failed", e);
         throw e;
@@ -148,10 +210,9 @@ export function DemoSection() {
         return;
       }
 
-      const url = dataUrl;
       const a = document.createElement("a");
-      a.href = url;
-      a.download = "taptap-result.png";
+      a.href = dataUrl;
+      a.download = "taptap-comparison.png";
       document.body.appendChild(a);
       a.click();
       a.remove();
@@ -162,6 +223,7 @@ export function DemoSection() {
       setShareStatus(msg);
     } finally {
       setIsSavingImage(false);
+      wrapper.remove();
     }
   };
 
@@ -335,6 +397,12 @@ export function DemoSection() {
                         placeholder="오늘 있었던 일이나 떠오르는 생각을 3줄 내외로 적어보세요."
                         value={inputText}
                         onChange={(e) => setInputText(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key !== "Enter") return;
+                    // Enter로 줄바꿈 대신 변환 실행
+                    e.preventDefault();
+                    void handleConvert();
+                  }}
                         className="w-full resize-none border-0 p-6 text-gray-900 outline-none placeholder:text-gray-400"
                         rows={6}
                       />
@@ -416,7 +484,7 @@ export function DemoSection() {
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.6, delay: 0.2 }}
-                    className="flex flex-col h-full space-y-6"
+                    className="flex flex-col h-full space-y-6 twitter-card"
                   >
                     {/* Platform Label */}
                     <div className="flex items-center gap-2">
@@ -526,7 +594,7 @@ export function DemoSection() {
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.6, delay: 0.2 }}
-                    className="flex flex-col h-full space-y-6"
+                    className="flex flex-col h-full space-y-6 insta-card"
                   >
                     {/* Platform Label */}
                     <div className="flex items-center gap-2">
