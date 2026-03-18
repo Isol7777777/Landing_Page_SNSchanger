@@ -122,6 +122,19 @@ export function DemoSection() {
     setIsLoadingImages(false);
     setShareStatus(null);
     setIsFromSharedLink(false);
+    setInputText("");
+
+    // 공유 링크로 들어온 경우, 다시 변환 화면으로 갈 때 URL 파라미터도 제거
+    const url = new URL(window.location.href);
+    if (url.searchParams.has("v")) {
+      url.searchParams.delete("v");
+      window.history.replaceState(null, "", url.toString());
+    }
+
+    // 결과 화면 -> 입력 화면으로 전환 후 DemoSection 상단으로 스크롤 복귀
+    setTimeout(() => {
+      sectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 0);
   };
 
   const handleSaveImage = async () => {
