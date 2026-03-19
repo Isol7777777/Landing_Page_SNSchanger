@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from "motion/react";
 import { useEffect, useRef, useState } from "react";
-import { domToPng } from "modern-screenshot";
+import { domToDataUrl, domToPng } from "modern-screenshot";
 import svgPaths from "../../imports/svg-eir802r15e";
 import svgPathsResult from "../../imports/svg-rtrsvnnyqs";
 import { transformText, type DualTransformResult } from "../../lib/gemini";
@@ -137,6 +137,177 @@ export function DemoSection() {
     }, 0);
   };
 
+  const getOrCreateShareUrl = async (): Promise<string> => {
+    const url = new URL(window.location.href);
+    const existing = url.searchParams.get("v");
+    if (existing) return url.toString();
+    if (!transformResult) {
+      throw new Error("공유 링크를 만들기 위한 변환 결과가 없습니다.");
+    }
+    const id = await createSharedLink(transformResult);
+    url.searchParams.set("v", id);
+    window.history.replaceState(null, "", url.toString());
+    return url.toString();
+  };
+
+  const buildComparisonWrapper = (): HTMLElement => {
+    const captureRoot = document.getElementById("capture-area");
+    const twitterCard = captureRoot?.querySelector(
+      ".twitter-card"
+    ) as HTMLElement | null;
+    const instaCard = captureRoot?.querySelector(
+      ".insta-card"
+    ) as HTMLElement | null;
+
+    if (!twitterCard || !instaCard) {
+      throw new Error("비교 캡처에 필요한 카드 영역을 찾지 못했어요.");
+    }
+
+    const wrapper = document.createElement("div");
+    wrapper.style.display = "flex";
+    wrapper.style.flexDirection = "row";
+    wrapper.style.alignItems = "flex-start";
+    wrapper.style.gap = "0";
+
+    const backgroundVar = getComputedStyle(document.documentElement).getPropertyValue(
+      "--background"
+    );
+    const backgroundColor = backgroundVar?.trim() || "#ffffff";
+    wrapper.style.backgroundColor = backgroundColor;
+
+    // 캡처 안정성을 위해 화면 내 좌상단에 잠깐 둠 (pointer-events none)
+    wrapper.style.position = "fixed";
+    wrapper.style.left = "0px";
+    wrapper.style.top = "0px";
+    wrapper.style.zIndex = "999999";
+    wrapper.style.pointerEvents = "none";
+    wrapper.style.padding = "0";
+    wrapper.style.margin = "0";
+    wrapper.style.overflow = "hidden";
+
+    const twClone = twitterCard.cloneNode(true) as HTMLElement;
+    const inClone = instaCard.cloneNode(true) as HTMLElement;
+    // 캡처에서 transform이 과하게 반영되는 현상 방지
+    twClone.style.transform = "none";
+    inClone.style.transform = "none";
+    twClone.style.flex = "0 0 auto";
+    inClone.style.flex = "0 0 auto";
+
+    wrapper.appendChild(twClone);
+    wrapper.appendChild(inClone);
+    return wrapper;
+  };
+
+  const shareToTwitter = async () => {
+    if (!transformResult) {
+      setShareStatus("먼저 변환을 완료해 주세요.");
+      return;
+    }
+    try {
+      const shareUrl = await getOrCreateShareUrl();
+      const text =
+        "내 아무말을 인스타 감성으로 세탁해드립니다. 본격 SNS 번역기 가동 중!";
+      const intentUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
+        text
+      )}&url=${encodeURIComponent(shareUrl)}`;
+      window.open(intentUrl, "_blank", "noopener,noreferrer");
+    } catch (e) {
+      const msg =
+        e instanceof Error
+          ? e.message
+          : "트위터 공유 링크 생성 중 오류가 발생했습니다.";
+      setShareStatus(msg);
+    }
+  };
+
+  const shareToInstagram = async () => {
+    if (!transformResult) {
+      setShareStatus("먼저 변환을 완료해 주세요.");
+      return;
+    }
+
+    try {
+      const shareUrl = await getOrCreateShareUrl();
+
+      const ua = navigator.userAgent || "";
+      const isIOS = /iPhone|iPad|iPod/i.test(ua);
+      const isAndroid = /Android/i.test(ua);
+      const isMobile = isIOS || isAndroid;
+
+      // 데스크탑: 링크 복사
+      if (!isMobile) {
+        await navigator.clipboard.writeText(shareUrl);
+        setShareStatus(
+          "데스크탑에서는 링크가 복사되었습니다! 모바일에서 접속하면 인스타그램 스토리로 바로 공유할 수 있어요."
+        );
+        return;
+      }
+
+      // 모바일: instagram-stories:// 스킴으로 즉시 실행
+      setIsSavingImage(true);
+      const wrapper = buildComparisonWrapper();
+      document.body.appendChild(wrapper);
+
+      const dataUrl = await domToDataUrl(wrapper, {
+        // 고화질
+        scale: 2,
+        // 배경을 흰색으로 확실히 지정
+        backgroundColor:
+          getComputedStyle(document.documentElement)
+            .getPropertyValue("--background")
+            .trim() || "#ffffff",
+        fetch: {
+          requestInit: {
+            mode: "cors",
+            cache: "no-cache",
+          },
+        },
+      }).catch((e: unknown) => {
+        console.error("[modern-screenshot] insta-story capture failed", e);
+        throw e;
+      });
+
+      // dataUrl: data:image/png;base64,XXXX -> base64 부분만 사용
+      const base64 = dataUrl.split(",")[1] ?? "";
+      if (!base64) throw new Error("캡처된 이미지 데이터가 비어있습니다.");
+
+      const sourceApplication =
+        (import.meta.env.VITE_INSTAGRAM_SOURCE_APPLICATION as
+          | string
+          | undefined)?.trim() || "TapTap";
+
+      const instagramSchemeUrl =
+        `instagram-stories://share?source_application=${encodeURIComponent(
+          sourceApplication
+        )}&backgroundImage=${encodeURIComponent(base64)}`;
+
+      // 앱이 설치되어 있다면 즉시 인스타가 열립니다.
+      window.location.href = instagramSchemeUrl;
+
+      // 앱이 설치되어 있지 않은 경우를 대비한 스토어 유도
+      const appStoreUrl = isIOS
+        ? "https://apps.apple.com/app/instagram/id389801252"
+        : "https://play.google.com/store/apps/details?id=com.instagram.android";
+
+      window.setTimeout(() => {
+        window.location.href = appStoreUrl;
+      }, 1800);
+
+      setShareStatus("인스타그램 스토리를 여는 중입니다...");
+
+      wrapper.remove();
+    } catch (e) {
+      console.error("[shareToInstagram] error", e);
+      const msg =
+        e instanceof Error
+          ? e.message
+          : "인스타그램 스토리 공유 중 오류가 발생했습니다.";
+      setShareStatus(msg);
+    } finally {
+      setIsSavingImage(false);
+    }
+  };
+
   const handleSaveImage = async () => {
     if (!isConverted) return;
     const captureRoot = document.getElementById("capture-area");
@@ -271,7 +442,7 @@ export function DemoSection() {
       ref={sectionRef as any}
       className="relative bg-white px-4 py-16 md:px-8 md:py-24 lg:px-16"
     >
-      <div className="mx-auto max-w-7xl">
+      <div className="mx-auto max-w-5xl">
         <AnimatePresence mode="wait">
           {!isConverted ? (
             // Input View
@@ -490,7 +661,7 @@ export function DemoSection() {
               </div>
 
               {/* Results Grid */}
-              <div className="mx-auto max-w-7xl" id="capture-area">
+              <div className="mx-auto max-w-5xl" id="capture-area">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
                   {/* Twitter Result */}
                   <motion.div
@@ -594,6 +765,7 @@ export function DemoSection() {
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                       className="flex w-full items-center justify-center gap-2 rounded-2xl bg-black px-6 py-4 font-semibold text-white shadow-lg transition-shadow hover:shadow-xl"
+                    onClick={shareToTwitter}
                     >
                       <svg className="size-5" fill="none" viewBox="0 0 20 20">
                         <path d={svgPathsResult.p1bb63c00} fill="white" />
@@ -722,6 +894,7 @@ export function DemoSection() {
                       whileTap={{ scale: 0.98 }}
                       className="flex w-full items-center justify-center gap-2 rounded-2xl px-6 py-4 font-semibold text-white shadow-lg transition-shadow hover:shadow-xl"
                       style={{ backgroundImage: "linear-gradient(90deg, rgb(246, 51, 154) 0%, rgb(152, 16, 250) 100%)" }}
+                    onClick={shareToInstagram}
                     >
                       <svg className="size-5" fill="none" viewBox="0 0 20 20">
                         <path d={svgPathsResult.p4b98700} stroke="white" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.66667" />

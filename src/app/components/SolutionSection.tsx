@@ -23,7 +23,7 @@ const itemVariants = {
 export function SolutionSection() {
   return (
     <section className="relative bg-white px-4 py-16 md:px-8 md:py-24 lg:px-16">
-      <div className="mx-auto max-w-7xl">
+      <div className="mx-auto max-w-5xl">
         {/* Section Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}

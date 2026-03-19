@@ -26,7 +26,7 @@ export function Hero() {
 
   return (
     <section className="relative min-h-screen overflow-hidden bg-gradient-to-br from-white via-purple-50/30 to-blue-50/40 px-4 pb-16 pt-24 md:px-8 lg:px-16">
-      <div className="mx-auto max-w-7xl">
+      <div className="mx-auto max-w-5xl">
         <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2">
           {/* Left Content */}
           <motion.div
@@ -127,7 +127,7 @@ export function Hero() {
               }}
               className="relative"
             >
-              <div className="relative z-10 w-[280px] overflow-hidden rounded-[40px] border-8 border-gray-800 bg-white shadow-2xl sm:w-[320px] md:w-[360px]">
+              <div className="relative z-10 w-[240px] overflow-hidden rounded-[40px] border-8 border-gray-800 bg-white shadow-2xl sm:w-[280px] md:w-[300px]">
                 <div className="aspect-[8/16] bg-white p-6">
                   <div className="space-y-4">
                     {/* Instagram */}

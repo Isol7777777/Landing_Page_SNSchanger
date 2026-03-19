@@ -4,7 +4,7 @@ import svgPaths from "../../imports/svg-eir802r15e";
 export function Footer() {
   return (
     <footer className="relative bg-gray-900 px-4 py-12 md:px-8 md:py-16 lg:px-16">
-      <div className="mx-auto max-w-7xl">
+      <div className="mx-auto max-w-5xl">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}

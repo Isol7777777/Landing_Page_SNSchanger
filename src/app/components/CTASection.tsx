@@ -67,7 +67,7 @@ export function CTASection() {
       id="cta-section"
       className="py-24 px-6 bg-gradient-to-br from-purple-600 via-[#8A2BE2] to-blue-600"
     >
-      <div className="max-w-4xl mx-auto bg-white/10 backdrop-blur-xl rounded-[40px] p-8 md:p-16 border border-white/20 shadow-2xl">
+      <div className="max-w-5xl mx-auto bg-white/10 backdrop-blur-xl rounded-[40px] p-8 md:p-16 border border-white/20 shadow-2xl">
         <div className="text-center mb-12">
           <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
             가장 나다운 콘텐츠 발행의 시작

@@ -43,6 +43,57 @@ const SYSTEM_INSTRUCTION = `[[System Instruction: SNS Dual-Transformer v4.0 - Mu
   "keywords": ["핵심소재", "장소", "감정", "날씨", "기타연관어"]
 }]`;
 
+type ImagePlatform = "twitter" | "instagram";
+
+const ENGLISH_TERMS_TWITTER_INSTRUCTION = `[[System Instruction: Korean -> English GIF Search Terms (Giphy/Twitter)]]
+
+너는 GIF 이미지 검색어 생성기다.
+입력된 한국어 키워드/구문(감정, 상황, 장소, 행동 등)을 보고,
+Giphy(트위터용 GIF)에서 가장 잘 맞는 영어 단어 1~3개를 골라라.
+
+[출력 규칙]
+1) 반드시 JSON 데이터만 출력한다. (설명/인사 금지)
+2) JSON 스키마:
+{
+  "terms": ["lazy","bored"]
+}
+3) terms 배열은 길이 1~3
+4) 각 term은 공백 없이 소문자 영어 단어 1개만 사용
+5) 특수문자/따옴표/해시태그/이모지 금지
+
+[예시]
+입력: 공부하기 싫어
+출력: {"terms":["lazy","bored"]}
+`;
+
+const ENGLISH_TERMS_INSTAGRAM_INSTRUCTION = `[[System Instruction: Korean -> English Photo Search Terms (Unsplash/Instagram)]]
+
+너는 사진 이미지 검색어 생성기다.
+입력된 한국어 키워드/구문(감정, 상황, 장소, 분위기 등)을 보고,
+Unsplash(인스타용 사진)에서 가장 잘 맞는 영어 단어 1~3개를 골라라.
+인스타는 'visual vibe'에 맞춰 추상적인 분위기/장면을 더 잘 표현하는 단어를 우선해라.
+
+[출력 규칙]
+1) 반드시 JSON 데이터만 출력한다. (설명/인사 금지)
+2) JSON 스키마:
+{
+  "terms": ["cozy","rainy"]
+}
+3) terms 배열은 길이 1~3
+4) 각 term은 공백 없이 소문자 영어 단어 1개만 사용
+5) 특수문자/따옴표/해시태그/이모지 금지
+
+[예시]
+입력: 비 오는 날 기분이 우울해
+출력: {"terms":["rainy","moody"]}
+`;
+
+function getEnglishTermsInstruction(platform: ImagePlatform): string {
+  return platform === "twitter"
+    ? ENGLISH_TERMS_TWITTER_INSTRUCTION
+    : ENGLISH_TERMS_INSTAGRAM_INSTRUCTION;
+}
+
 function getGeminiApiKey(): string | undefined {
   return import.meta.env.VITE_GEMINI_API_KEY as string | undefined;
 }
@@ -189,6 +240,147 @@ function normalizeResult(raw: unknown): DualTransformResult {
     throw new Error("keywords must be an array of 3 to 8 strings.");
   }
   return { instagram, twitter, keywords };
+}
+
+function normalizeEnglishTerms(raw: unknown): string[] {
+  if (!raw || typeof raw !== "object") {
+    throw new Error("Invalid JSON shape from model.");
+  }
+  const obj = raw as Record<string, unknown>;
+  const termsRaw = obj.terms;
+  if (!Array.isArray(termsRaw)) {
+    throw new Error("Missing 'terms' array in model JSON.");
+  }
+
+  const tokens: string[] = [];
+  for (const t of termsRaw) {
+    if (typeof t !== "string") continue;
+    const normalized = t.trim().toLowerCase();
+    // 혹시 "lazy, bored" 처럼 한 문자열로 들어오면 단어 단위로 분해
+    const parts = normalized.split(/[^a-zA-Z]+/g).filter(Boolean);
+    for (const p of parts) {
+      const word = p.trim();
+      if (!word) continue;
+      if (!/^[a-z]+$/.test(word)) continue;
+      tokens.push(word);
+    }
+  }
+
+  const unique = Array.from(new Set(tokens));
+  if (!unique.length) {
+    throw new Error("Model returned empty english terms.");
+  }
+  return unique.slice(0, 3);
+}
+
+async function extractEnglishTermsWithGroq(
+  koreanKeyword: string,
+  platform: ImagePlatform
+): Promise<string[]> {
+  const apiKey = getGroqApiKey();
+  if (!apiKey) throw new Error("VITE_GROQ_API_KEY is missing.");
+
+  const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      model: getGroqModel(),
+      temperature: 0.2,
+      response_format: { type: "json_object" },
+      messages: [
+        { role: "system", content: getEnglishTermsInstruction(platform) },
+        { role: "user", content: koreanKeyword },
+      ],
+    }),
+  });
+
+  if (!res.ok) {
+    const body = await res.text().catch(() => "");
+    throw new Error(`GROQ request failed (${res.status}): ${body}`);
+  }
+
+  const data = (await res.json()) as {
+    choices?: Array<{ message?: { content?: string } }>;
+  };
+  const content = data.choices?.[0]?.message?.content ?? "";
+  const parsed = extractJsonObject(content);
+  return normalizeEnglishTerms(parsed);
+}
+
+async function extractEnglishTermsWithGemini(
+  koreanKeyword: string,
+  platform: ImagePlatform
+): Promise<string[]> {
+  const apiKey = getGeminiApiKey();
+  if (!apiKey) {
+    throw new Error("VITE_GEMINI_API_KEY is missing. Set it in your .env file.");
+  }
+
+  const genAI = new GoogleGenerativeAI(apiKey);
+  let lastError: unknown = null;
+
+  for (const modelName of getModelCandidates()) {
+    try {
+      const model = genAI.getGenerativeModel({
+        model: modelName,
+        systemInstruction: getEnglishTermsInstruction(platform),
+      });
+
+      const result = await model.generateContent({
+        contents: [{ role: "user", parts: [{ text: koreanKeyword }] }],
+        generationConfig: {
+          responseMimeType: "application/json",
+          temperature: 0.2,
+        },
+      });
+
+      const responseText = result.response.text();
+      const parsed = extractJsonObject(responseText);
+      return normalizeEnglishTerms(parsed);
+    } catch (e) {
+      lastError = e;
+    }
+  }
+
+  const msg =
+    lastError instanceof Error ? lastError.message : "Gemini API request failed.";
+  throw new Error(msg);
+}
+
+/**
+ * 한국어 키워드를 이미지 검색용 영어 단어 1~3개로 변환합니다.
+ * Returns: string[] length 1..3
+ */
+export async function extractEnglishSearchTerms(
+  koreanKeyword: string
+): Promise<string[]> {
+  const input = koreanKeyword.trim();
+  if (!input) throw new Error("koreanKeyword is empty.");
+
+  // During development, prefer Groq when a key is present.
+  if (getGroqApiKey()) {
+    return await extractEnglishTermsWithGroq(input, "twitter");
+  }
+  return await extractEnglishTermsWithGemini(input, "twitter");
+}
+
+/**
+ * 플랫폼별로 한국어 키워드를 영어 search_term(1~3개)으로 변환합니다.
+ */
+export async function extractEnglishSearchTermsForPlatform(
+  koreanKeyword: string,
+  platform: ImagePlatform
+): Promise<string[]> {
+  const input = koreanKeyword.trim();
+  if (!input) throw new Error("koreanKeyword is empty.");
+
+  if (getGroqApiKey()) {
+    return await extractEnglishTermsWithGroq(input, platform);
+  }
+  return await extractEnglishTermsWithGemini(input, platform);
 }
 
 /**
