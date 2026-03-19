@@ -2,6 +2,8 @@
 
 :root {
   --font-size: 16px;
+  --vibrant-violet: #8b5cf6;
+  --electric-blue: #3b82f6;
   --background: #ffffff;
   --foreground: #111827;
   --card: #ffffff;
@@ -42,6 +44,8 @@
 }
 
 .dark {
+  --vibrant-violet: #a78bfa;
+  --electric-blue: #60a5fa;
   --background: #030712;
   --foreground: #f9fafb;
   --card: #030712;
