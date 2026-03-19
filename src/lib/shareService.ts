@@ -1,7 +1,9 @@
-import { supabase } from "./supabaseClient";
-import type { DualTransformResult } from "./gemini";
-
-export type SharedLinkContent = DualTransformResult;
+import { getSupabaseClient } from "./supabaseClient";
+export type SharedLinkContent = {
+  instagram: string;
+  twitter: string;
+  keywords: string[];
+};
 
 const TABLE_NAME = "shared_links";
 
@@ -13,6 +15,7 @@ const TABLE_NAME = "shared_links";
 export async function createSharedLink(
   content: SharedLinkContent
 ): Promise<string> {
+  const supabase = await getSupabaseClient();
   const { data, error } = await supabase
     .from(TABLE_NAME)
     .insert([{ content }]) // id는 명시하지 않음
@@ -33,6 +36,7 @@ export async function createSharedLink(
 export async function fetchSharedLink(
   id: string
 ): Promise<SharedLinkContent | null> {
+  const supabase = await getSupabaseClient();
   const { data, error } = await supabase
     .from(TABLE_NAME)
     .select("id,content")

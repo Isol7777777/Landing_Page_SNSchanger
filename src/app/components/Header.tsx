@@ -1,4 +1,3 @@
-import React from "react";
 import logoTapTap from "../../assets/logo-taptap.png";
 
 export function Header() {
