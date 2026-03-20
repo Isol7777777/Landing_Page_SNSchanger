@@ -104,6 +104,10 @@ export function useDemoShare({
     const sharedId = url.searchParams.get("v");
     if (!sharedId) return;
 
+    // 모바일에서는 공유 링크 파라미터 자동 복원을 비활성화합니다.
+    // (자동으로 결과가 채워지고 DemoSection으로 스크롤되는 현상 방지)
+    if (isMobileDevice()) return;
+
     let cancelled = false;
     const restoreFromSharedLink = async () => {
       try {

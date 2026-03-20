@@ -80,8 +80,8 @@ export function Hero() {
           {/* Right Content - Phone Mockup */}
           <div className="relative flex justify-center lg:justify-end">
             <div className="relative">
-              <div className="relative z-10 w-[240px] overflow-hidden rounded-[40px] border-8 border-gray-800 bg-white shadow-2xl dark:border-border/80 dark:bg-card sm:w-[280px] md:w-[300px]">
-                <div className="aspect-[8/16] bg-white p-6 dark:bg-card">
+              <div className="relative z-10 aspect-[8/16] w-[240px] overflow-hidden rounded-[40px] border-8 border-gray-800 bg-white shadow-2xl dark:border-border/80 dark:bg-card sm:w-[280px] md:w-[300px]">
+                <div className="h-full bg-white p-6 dark:bg-card overflow-hidden">
                   <div className="space-y-4">
                     {/* Instagram */}
                     <div className="overflow-hidden rounded-2xl border border-gray-100 bg-gradient-to-br from-gray-50 to-white p-4 shadow-sm dark:border-border/90 dark:bg-primary/14 dark:from-transparent dark:to-transparent">
