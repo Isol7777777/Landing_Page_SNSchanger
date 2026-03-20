@@ -475,7 +475,7 @@ export function DemoSection() {
             </div>
 
             {/* 하단: 결과 영역 */}
-            <div className="flex min-h-0 flex-1 flex-col gap-4 p-4">
+            <div className="relative flex min-h-0 flex-1 flex-col gap-4 p-4">
               {/* 플랫폼 탭 선택기 */}
               <div className="flex gap-2 rounded-2xl border border-border/80 bg-card p-1">
                 <button
@@ -505,7 +505,7 @@ export function DemoSection() {
               </div>
 
               {/* 결과 출력창 */}
-              <div className="min-h-0 flex-1 overflow-y-auto rounded-2xl border-2 border-border bg-card px-4 py-3 shadow-sm">
+              <div className="min-h-0 flex-1 overflow-y-auto rounded-2xl border-2 border-border bg-card px-4 py-3 pb-24 shadow-sm">
                 {outputText ? (
                   <motion.div
                     initial={{ opacity: 0 }}
@@ -520,79 +520,80 @@ export function DemoSection() {
                   </div>
                 )}
               </div>
-
               {/* Share Button (sm 미만: demo-grid 내부에 포함) */}
-              <div className="relative shrink-0">
-                <button
-                  type="button"
-                  onClick={() => setShowShareMenu(!showShareMenu)}
-                  disabled={!outputText}
-                  className="flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[var(--vibrant-violet)] to-[var(--electric-blue)] px-6 py-4 font-semibold text-white transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-purple-500/40 disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  <Share2 className="h-5 w-5" />
-                  공유하기
-                </button>
+              <div className="absolute bottom-4 left-4 right-4 z-10 flex flex-col gap-3">
+                <div className="relative">
+                  <button
+                    type="button"
+                    onClick={() => setShowShareMenu(!showShareMenu)}
+                    disabled={!outputText}
+                    className="flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[var(--vibrant-violet)] to-[var(--electric-blue)] px-6 py-4 font-semibold text-white transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-purple-500/40 disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    <Share2 className="h-5 w-5" />
+                    공유하기
+                  </button>
 
-                <AnimatePresence>
-                  {showShareMenu && outputText && (
-                    <>
-                      {/* Backdrop */}
-                      <div
-                        className="fixed inset-0 z-40"
-                        data-capture-exclude="true"
-                        onClick={() => setShowShareMenu(false)}
-                      />
+                  <AnimatePresence>
+                    {showShareMenu && outputText && (
+                      <>
+                        {/* Backdrop */}
+                        <div
+                          className="fixed inset-0 z-40"
+                          data-capture-exclude="true"
+                          onClick={() => setShowShareMenu(false)}
+                        />
 
-                      {/* Menu */}
-                      <motion.div
-                        role="menu"
-                        data-capture-exclude="true"
-                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                        transition={{ duration: 0.15 }}
-                        className="absolute bottom-full left-1/2 z-50 mb-2 w-64 -translate-x-1/2 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-2xl"
-                      >
-                        {shareOptions.map((option, index) => (
-                          <button
-                            key={index}
-                            type="button"
-                            onClick={() => {
-                              option.action();
-                              setShowShareMenu(false);
-                            }}
-                            className="flex w-full items-center gap-3 border-b border-gray-100 px-4 py-3 transition-colors duration-150 last:border-b-0 hover:bg-gradient-to-r hover:from-purple-50 hover:to-blue-50"
-                          >
-                            <option.icon className="h-5 w-5 text-gray-600" />
-                            <span className="text-sm font-medium text-gray-900">
-                              {option.label}
-                            </span>
-                            {option.label === "Copy Link" && copied && (
-                              <Check className="ml-auto h-4 w-4 text-green-500" />
-                            )}
-                          </button>
-                        ))}
-                      </motion.div>
-                    </>
-                  )}
-                </AnimatePresence>
+                        {/* Menu */}
+                        <motion.div
+                          role="menu"
+                          data-capture-exclude="true"
+                          initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                          animate={{ opacity: 1, y: 0, scale: 1 }}
+                          exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                          transition={{ duration: 0.15 }}
+                          className="absolute bottom-full left-1/2 z-50 mb-2 w-64 -translate-x-1/2 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-2xl"
+                        >
+                          {shareOptions.map((option, index) => (
+                            <button
+                              key={index}
+                              type="button"
+                              onClick={() => {
+                                option.action();
+                                setShowShareMenu(false);
+                              }}
+                              className="flex w-full items-center gap-3 border-b border-gray-100 px-4 py-3 transition-colors duration-150 last:border-b-0 hover:bg-gradient-to-r hover:from-purple-50 hover:to-blue-50"
+                            >
+                              <option.icon className="h-5 w-5 text-gray-600" />
+                              <span className="text-sm font-medium text-gray-900">
+                                {option.label}
+                              </span>
+                              {option.label === "Copy Link" && copied && (
+                                <Check className="ml-auto h-4 w-4 text-green-500" />
+                              )}
+                            </button>
+                          ))}
+                        </motion.div>
+                      </>
+                    )}
+                  </AnimatePresence>
+                </div>
+
+                {isConverted && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setInputText("");
+                      setOutputText("");
+                      setIsConverted(false);
+                      setActivePresetId(null);
+                      setShowShareMenu(false);
+                    }}
+                    className="text-sm font-semibold text-purple-600 transition-colors hover:text-purple-700"
+                  >
+                    다시 변환하기
+                  </button>
+                )}
               </div>
-
-              {isConverted && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setInputText("");
-                    setOutputText("");
-                    setIsConverted(false);
-                    setActivePresetId(null);
-                    setShowShareMenu(false);
-                  }}
-                  className="text-sm font-semibold text-purple-600 transition-colors hover:text-purple-700"
-                >
-                  다시 변환하기
-                </button>
-              )}
             </div>
           </div>
         </motion.div>
@@ -639,7 +640,7 @@ export function DemoSection() {
                 </div>
 
                 {/* Bottom: 결과 영역 */}
-                <div className="flex min-h-0 flex-1 flex-col gap-4 p-4">
+                <div className="relative flex min-h-0 flex-1 flex-col gap-4 p-4">
                   {/* 플랫폼 탭 선택기 */}
                   <div className="flex gap-2 rounded-2xl border border-border/80 bg-card p-1">
                     <div
@@ -664,7 +665,7 @@ export function DemoSection() {
                     </div>
                   </div>
 
-                  <div className="min-h-0 flex-1 overflow-y-auto rounded-2xl border-2 border-border bg-card px-4 py-3 shadow-sm">
+                  <div className="min-h-0 flex-1 overflow-y-auto rounded-2xl border-2 border-border bg-card px-4 py-3 pb-24 shadow-sm">
                     {outputText ? (
                       <div className="whitespace-pre-wrap leading-relaxed text-foreground">
                         {outputText}
@@ -676,15 +677,17 @@ export function DemoSection() {
                     )}
                   </div>
 
-                  {/* Share button included in capture */}
-                  <button
-                    type="button"
-                    disabled={!outputText}
-                    className="flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[var(--vibrant-violet)] to-[var(--electric-blue)] px-6 py-4 font-semibold text-white transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-purple-500/40 disabled:cursor-not-allowed disabled:opacity-50"
-                  >
-                    <Share2 className="h-5 w-5" />
-                    공유하기
-                  </button>
+                  {/* Share button included in capture (absolute to keep output height) */}
+                  <div className="absolute bottom-4 left-4 right-4">
+                    <button
+                      type="button"
+                      disabled={!outputText}
+                      className="flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[var(--vibrant-violet)] to-[var(--electric-blue)] px-6 py-4 font-semibold text-white transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-purple-500/40 disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      <Share2 className="h-5 w-5" />
+                      공유하기
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
