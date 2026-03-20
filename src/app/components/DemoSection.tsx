@@ -228,108 +228,284 @@ export function DemoSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ delay: 0.2 }}
-          className="grid gap-6 rounded-3xl border border-border/80 bg-card p-8 shadow-2xl lg:grid-cols-2 dark:bg-primary/14"
+          className="rounded-3xl border border-border/80 bg-card p-0 shadow-2xl sm:p-8 dark:bg-primary/14"
         >
-          {/* Left Panel - Input */}
-          <div className="flex h-full flex-col gap-4">
-            {/* Header */}
-            <div className="flex min-h-[132px] flex-col justify-end gap-2">
-              <label className="text-lg text-foreground">
-                당신의 생각을 간단하게 입력하세요.
-                <br />
-                그럼 AI가 자동으로 변환해드립니다.
-              </label>
-              <p className="text-sm text-muted-foreground">
-                무엇을 입력할지 모르겠다면 예시를 클릭해보세요.
-              </p>
+          {/* Desktop (sm 이상): 기존 좌/우 그리드 유지 */}
+          <div className="hidden h-full sm:grid sm:grid-cols-2 gap-6">
+            {/* Left Panel - Input */}
+            <div className="flex h-full flex-col gap-4">
+              {/* Header */}
+              <div className="flex min-h-[132px] flex-col justify-end gap-2">
+                <label className="text-lg text-foreground">
+                  당신의 생각을 간단하게 입력하세요.
+                  <br />
+                  그럼 AI가 자동으로 변환해드립니다.
+                </label>
+                <p className="text-sm text-muted-foreground">
+                  무엇을 입력할지 모르겠다면 예시를 클릭해보세요.
+                </p>
 
-              {/* Example Pills */}
-              <div className="flex flex-wrap gap-2">
+                {/* Example Pills */}
+                <div className="flex flex-wrap gap-2">
+                  {EXAMPLE_PRESETS.map((pill) => (
+                    <button
+                      key={pill.id}
+                      onClick={() => handleExampleClick(pill.id)}
+                      className="rounded-full border border-border bg-card px-3 py-1.5 text-sm text-foreground shadow-sm transition-all duration-200 hover:border-purple-300 hover:bg-gradient-to-r hover:from-purple-50 hover:to-blue-50 hover:text-[var(--vibrant-violet)] hover:shadow-md"
+                    >
+                      {pill.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Textarea */}
+              <textarea
+                value={inputText}
+                onChange={(e) => {
+                  setInputText(e.target.value);
+                  setActivePresetId(null);
+                }}
+                placeholder="예: 오늘 퇴근길에 본 노을이 정말 아름다웠어요..."
+                className="h-[320px] w-full resize-none rounded-2xl border-2 border-border bg-card px-4 py-3 text-foreground placeholder:text-muted-foreground shadow-sm transition-all focus:border-[var(--vibrant-violet)] focus:outline-none focus:ring-4 focus:ring-purple-100"
+              />
+
+              {/* Translate Button */}
+              <button
+                onClick={handleTranslate}
+                disabled={!inputText.trim() || isTranslating}
+                className="flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[var(--vibrant-violet)] to-[var(--electric-blue)] px-6 py-4 font-semibold text-white transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-purple-500/40 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {isTranslating ? (
+                  <>
+                    <motion.div
+                      animate={{ rotate: 360 }}
+                      transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                    >
+                      <Sparkles className="h-5 w-5" />
+                    </motion.div>
+                    변환 중...
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="h-5 w-5" />
+                    변환하기
+                  </>
+                )}
+              </button>
+            </div>
+
+            {/* Right Panel - Output */}
+            <div className="flex h-full flex-col gap-4">
+              {/* Platform Tabs */}
+              <div className="flex min-h-[132px] items-end">
+                <div className="flex w-full gap-2 rounded-2xl border border-border/80 bg-card p-1 shadow-sm">
+                  <button
+                    onClick={() => {
+                      handleTabChange("instagram");
+                    }}
+                    className={`flex flex-1 items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-medium transition-all duration-200 ${
+                      activeTab === "instagram"
+                        ? "bg-gradient-to-r from-pink-900 to-orange-800 text-white shadow-lg shadow-pink-500/10"
+                        : "text-muted-foreground hover:bg-card/70 hover:text-foreground"
+                    }`}
+                  >
+                    <Instagram className="h-4 w-4" />
+                    Instagram
+                  </button>
+                  <button
+                    onClick={() => {
+                      handleTabChange("twitter");
+                    }}
+                    className={`flex flex-1 items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-medium transition-all duration-200 ${
+                      activeTab === "twitter"
+                        ? "bg-gradient-to-r from-zinc-800 to-black text-white shadow-lg shadow-black/30"
+                        : "text-muted-foreground hover:bg-card/70 hover:text-foreground"
+                    }`}
+                  >
+                    <XIcon className="h-4 w-4" />
+                    X(트위터)
+                  </button>
+                </div>
+              </div>
+
+              {/* Output Box */}
+              <div className="relative">
+                <div className="h-[320px] w-full overflow-y-auto rounded-2xl border-2 border-border bg-card px-4 py-3 shadow-sm">
+                  {outputText ? (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      className="whitespace-pre-wrap leading-relaxed text-foreground"
+                    >
+                      {outputText}
+                    </motion.div>
+                  ) : (
+                    <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
+                      변환된 내용이 여기에 표시됩니다
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Share Button */}
+              <div className="relative">
+                <button
+                  onClick={() => setShowShareMenu(!showShareMenu)}
+                  disabled={!outputText}
+                  className="flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[var(--vibrant-violet)] to-[var(--electric-blue)] px-6 py-4 font-semibold text-white transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-purple-500/40 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  <Share2 className="h-5 w-5" />
+                  공유하기
+                </button>
+
+                {/* Share Menu Popover */}
+                <AnimatePresence>
+                  {showShareMenu && outputText && (
+                    <>
+                      {/* Backdrop */}
+                      <div
+                        className="fixed inset-0 z-40"
+                        data-capture-exclude="true"
+                        onClick={() => setShowShareMenu(false)}
+                      />
+
+                      {/* Menu */}
+                      <motion.div
+                        role="menu"
+                        data-capture-exclude="true"
+                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                        transition={{ duration: 0.15 }}
+                        className="absolute bottom-full right-0 z-50 mb-2 w-64 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-2xl"
+                      >
+                        {shareOptions.map((option, index) => (
+                          <button
+                            key={index}
+                            onClick={() => {
+                              option.action();
+                              setShowShareMenu(false);
+                            }}
+                            className="flex w-full items-center gap-3 border-b border-gray-100 px-4 py-3 transition-colors duration-150 last:border-b-0 hover:bg-gradient-to-r hover:from-purple-50 hover:to-blue-50"
+                          >
+                            <option.icon className="h-5 w-5 text-gray-600" />
+                            <span className="text-sm font-medium text-gray-900">
+                              {option.label}
+                            </span>
+                            {option.label === "Copy Link" && copied && (
+                              <Check className="ml-auto h-4 w-4 text-green-500" />
+                            )}
+                          </button>
+                        ))}
+                      </motion.div>
+                    </>
+                  )}
+                </AnimatePresence>
+              </div>
+
+              {isConverted && (
+                <button
+                  onClick={() => {
+                    setInputText("");
+                    setOutputText("");
+                    setIsConverted(false);
+                    setActivePresetId(null);
+                    setShowShareMenu(false);
+                  }}
+                  className="text-sm font-semibold text-purple-600 transition-colors hover:text-purple-700"
+                >
+                  다시 변환하기
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Mobile Full-screen Split (sm 미만) */}
+          <div className="sm:hidden flex h-[calc(100dvh-120px)] min-h-[calc(100dvh-120px)] flex-col">
+            {/* 상단: 입력 영역 */}
+            <div className="flex min-h-0 flex-1 flex-col gap-3 p-4">
+              {/* 모바일 전용 예시 필 (가로 스크롤, 한 줄) */}
+              <div className="flex gap-2 overflow-x-auto pb-2">
                 {EXAMPLE_PRESETS.map((pill) => (
                   <button
                     key={pill.id}
+                    type="button"
                     onClick={() => handleExampleClick(pill.id)}
-                    className="rounded-full border border-border bg-card px-3 py-1.5 text-sm text-foreground shadow-sm transition-all duration-200 hover:border-purple-300 hover:bg-gradient-to-r hover:from-purple-50 hover:to-blue-50 hover:text-[var(--vibrant-violet)] hover:shadow-md"
+                    className="flex-shrink-0 rounded-full border border-border/80 bg-card px-3 py-1.5 text-sm text-foreground shadow-sm transition-all duration-200 hover:border-purple-300 hover:shadow-md"
                   >
                     {pill.label}
                   </button>
                 ))}
               </div>
+
+              <textarea
+                value={inputText}
+                onChange={(e) => {
+                  setInputText(e.target.value);
+                  setActivePresetId(null);
+                }}
+                placeholder="여기에 텍스트를 입력하거나 붙여넣기 ..."
+                className="min-h-0 w-full flex-1 resize-none rounded-2xl border-2 border-border bg-card px-4 py-3 text-foreground placeholder:text-muted-foreground shadow-sm transition-all focus:border-[var(--vibrant-violet)] focus:outline-none focus:ring-4 focus:ring-purple-100"
+              />
             </div>
 
-            {/* Textarea */}
-            <textarea
-              value={inputText}
-              onChange={(e) => {
-                setInputText(e.target.value);
-                setActivePresetId(null);
-              }}
-              placeholder="예: 오늘 퇴근길에 본 노을이 정말 아름다웠어요..."
-              className="h-[320px] w-full resize-none rounded-2xl border-2 border-border bg-card px-4 py-3 text-foreground placeholder:text-muted-foreground shadow-sm transition-all focus:border-[var(--vibrant-violet)] focus:outline-none focus:ring-4 focus:ring-purple-100"
-            />
-
-            {/* Translate Button */}
-            <button
-              onClick={handleTranslate}
-              disabled={!inputText.trim() || isTranslating}
-              className="flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[var(--vibrant-violet)] to-[var(--electric-blue)] px-6 py-4 font-semibold text-white transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-purple-500/40 disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              {isTranslating ? (
-                <>
-                  <motion.div
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                  >
+            {/* 중앙: 변환하기 버튼 */}
+            <div className="shrink-0 px-4 pb-4 pt-2">
+              <button
+                onClick={handleTranslate}
+                disabled={!inputText.trim() || isTranslating}
+                className="relative w-full rounded-full bg-gradient-to-r from-[var(--vibrant-violet)] to-[var(--electric-blue)] px-6 py-3.5 font-semibold text-white shadow-lg transition-all hover:scale-[1.02] hover:shadow-purple-500/40 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <span className="inline-flex items-center justify-center gap-2">
+                  {isTranslating ? (
+                    <motion.span
+                      animate={{ rotate: 360 }}
+                      transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                      className="inline-flex"
+                    >
+                      <Sparkles className="h-5 w-5" />
+                    </motion.span>
+                  ) : (
                     <Sparkles className="h-5 w-5" />
-                  </motion.div>
-                  변환 중...
-                </>
-              ) : (
-                <>
-                  <Sparkles className="h-5 w-5" />
-                  변환하기
-                </>
-              )}
-            </button>
-          </div>
-
-          {/* Right Panel - Output */}
-          <div className="flex h-full flex-col gap-4">
-            {/* Platform Tabs */}
-            <div className="flex min-h-[132px] items-end">
-              <div className="flex w-full gap-2 rounded-2xl border border-border/80 bg-card p-1 shadow-sm">
-              <button
-                onClick={() => {
-                  handleTabChange("instagram");
-                }}
-                className={`flex flex-1 items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-medium transition-all duration-200 ${
-                  activeTab === "instagram"
-                    ? "bg-gradient-to-r from-pink-900 to-orange-800 text-white shadow-lg shadow-pink-500/10"
-                    : "text-muted-foreground hover:bg-card/70 hover:text-foreground"
-                }`}
-              >
-                <Instagram className="h-4 w-4" />
-                Instagram
+                  )}
+                  {isTranslating ? "변환 중..." : "변환하기"}
+                </span>
               </button>
-              <button
-                onClick={() => {
-                  handleTabChange("twitter");
-                }}
-                className={`flex flex-1 items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-medium transition-all duration-200 ${
-                  activeTab === "twitter"
-                    ? "bg-gradient-to-r from-zinc-800 to-black text-white shadow-lg shadow-black/30"
-                    : "text-muted-foreground hover:bg-card/70 hover:text-foreground"
-                }`}
-              >
-                <XIcon className="h-4 w-4" />
-                X(트위터)
-              </button>
-              </div>
             </div>
 
-            {/* Output Box */}
-            <div className="relative">
-              <div className="h-[320px] w-full overflow-y-auto rounded-2xl border-2 border-border bg-card px-4 py-3 shadow-sm">
+            {/* 하단: 결과 영역 */}
+            <div className="flex min-h-0 flex-1 flex-col gap-4 p-4">
+              {/* 플랫폼 탭 선택기 */}
+              <div className="flex gap-2 rounded-2xl border border-border/80 bg-card p-1">
+                <button
+                  type="button"
+                  onClick={() => handleTabChange("instagram")}
+                  className={`flex flex-1 items-center justify-center gap-2 rounded-xl px-3 py-2 text-xs font-medium transition-all duration-200 ${
+                    activeTab === "instagram"
+                      ? "bg-gradient-to-r from-pink-900 to-orange-800 text-white shadow-lg shadow-pink-500/10"
+                      : "text-muted-foreground hover:bg-card/70 hover:text-foreground"
+                  }`}
+                >
+                  <Instagram className="h-4 w-4" />
+                  Instagram
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleTabChange("twitter")}
+                  className={`flex flex-1 items-center justify-center gap-2 rounded-xl px-3 py-2 text-xs font-medium transition-all duration-200 ${
+                    activeTab === "twitter"
+                      ? "bg-gradient-to-r from-zinc-800 to-black text-white shadow-lg shadow-black/30"
+                      : "text-muted-foreground hover:bg-card/70 hover:text-foreground"
+                  }`}
+                >
+                  <XIcon className="h-4 w-4" />
+                  X
+                </button>
+              </div>
+
+              {/* 결과 출력창 */}
+              <div className="min-h-0 flex-1 overflow-y-auto rounded-2xl border-2 border-border bg-card px-4 py-3 shadow-sm">
                 {outputText ? (
                   <motion.div
                     initial={{ opacity: 0 }}
@@ -345,79 +521,84 @@ export function DemoSection() {
                 )}
               </div>
             </div>
-
-            {/* Share Button */}
-            <div className="relative">
-              <button
-                onClick={() => setShowShareMenu(!showShareMenu)}
-                disabled={!outputText}
-                className="flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[var(--vibrant-violet)] to-[var(--electric-blue)] px-6 py-4 font-semibold text-white transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-purple-500/40 disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                <Share2 className="h-5 w-5" />
-                공유하기
-              </button>
-
-              {/* Share Menu Popover */}
-              <AnimatePresence>
-                {showShareMenu && outputText && (
-                  <>
-                    {/* Backdrop */}
-                    <div
-                      className="fixed inset-0 z-40"
-                      data-capture-exclude="true"
-                      onClick={() => setShowShareMenu(false)}
-                    />
-
-                    {/* Menu */}
-                    <motion.div
-                      role="menu"
-                      data-capture-exclude="true"
-                      initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                      transition={{ duration: 0.15 }}
-                      className="absolute bottom-full right-0 z-50 mb-2 w-64 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-2xl"
-                    >
-                      {shareOptions.map((option, index) => (
-                        <button
-                          key={index}
-                          onClick={() => {
-                            option.action();
-                            setShowShareMenu(false);
-                          }}
-                          className="flex w-full items-center gap-3 border-b border-gray-100 px-4 py-3 transition-colors duration-150 last:border-b-0 hover:bg-gradient-to-r hover:from-purple-50 hover:to-blue-50"
-                        >
-                          <option.icon className="h-5 w-5 text-gray-600" />
-                          <span className="text-sm font-medium text-gray-900">
-                            {option.label}
-                          </span>
-                          {option.label === "Copy Link" && copied && (
-                            <Check className="ml-auto h-4 w-4 text-green-500" />
-                          )}
-                        </button>
-                      ))}
-                    </motion.div>
-                  </>
-                )}
-              </AnimatePresence>
-            </div>
-
-            {isConverted && (
-              <button
-                onClick={() => {
-                  setInputText("");
-                  setOutputText("");
-                  setIsConverted(false);
-                  setActivePresetId(null);
-                  setShowShareMenu(false);
-                }}
-                className="text-sm font-semibold text-purple-600 transition-colors hover:text-purple-700"
-              >
-                다시 변환하기
-              </button>
-            )}
           </div>
         </motion.div>
+
+        {/* Mobile Share/Reset Controls (visible only, not included in capture-area) */}
+        <div className="sm:hidden px-6 pb-1">
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => setShowShareMenu(!showShareMenu)}
+              disabled={!outputText}
+              className="flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[var(--vibrant-violet)] to-[var(--electric-blue)] px-6 py-4 font-semibold text-white transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-purple-500/40 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              <Share2 className="h-5 w-5" />
+              공유하기
+            </button>
+
+            {/* Share Menu Popover */}
+            <AnimatePresence>
+              {showShareMenu && outputText && (
+                <>
+                  {/* Backdrop */}
+                  <div
+                    className="fixed inset-0 z-40"
+                    data-capture-exclude="true"
+                    onClick={() => setShowShareMenu(false)}
+                  />
+
+                  {/* Menu */}
+                  <motion.div
+                    role="menu"
+                    data-capture-exclude="true"
+                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                    transition={{ duration: 0.15 }}
+                    className="absolute bottom-full left-1/2 z-50 mb-2 w-64 -translate-x-1/2 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-2xl"
+                  >
+                    {shareOptions.map((option, index) => (
+                      <button
+                        key={index}
+                        type="button"
+                        onClick={() => {
+                          option.action();
+                          setShowShareMenu(false);
+                        }}
+                        className="flex w-full items-center gap-3 border-b border-gray-100 px-4 py-3 transition-colors duration-150 last:border-b-0 hover:bg-gradient-to-r hover:from-purple-50 hover:to-blue-50"
+                      >
+                        <option.icon className="h-5 w-5 text-gray-600" />
+                        <span className="text-sm font-medium text-gray-900">
+                          {option.label}
+                        </span>
+                        {option.label === "Copy Link" && copied && (
+                          <Check className="ml-auto h-4 w-4 text-green-500" />
+                        )}
+                      </button>
+                    ))}
+                  </motion.div>
+                </>
+              )}
+            </AnimatePresence>
+          </div>
+
+          {isConverted && (
+            <button
+              type="button"
+              onClick={() => {
+                setInputText("");
+                setOutputText("");
+                setIsConverted(false);
+                setActivePresetId(null);
+                setShowShareMenu(false);
+              }}
+              className="mt-3 text-sm font-semibold text-purple-600 transition-colors hover:text-purple-700"
+            >
+              다시 변환하기
+            </button>
+          )}
+        </div>
 
         {/* Hidden Capture Rendering */}
         <div className="fixed left-[-9999px] top-[-9999px] -z-50 pointer-events-none">
@@ -426,72 +607,76 @@ export function DemoSection() {
               id="capture-area"
               className="w-full max-w-[450px] overflow-hidden rounded-3xl border border-border bg-background text-foreground shadow-2xl"
             >
-              <div className="flex flex-col p-6">
-                {/* Header with Platform Selector */}
-                <div className="mb-6 flex items-center">
-                  <div className="flex gap-2 rounded-2xl bg-gray-100 p-1">
-                    <button
-                      onClick={() => handleTabChange("instagram")}
-                      className={`flex items-center gap-1.5 rounded-xl px-4 py-2 text-xs font-medium transition-all duration-200 ${
+              <div className="flex min-h-[calc(100dvh-120px)] flex-col">
+                {/* Top: 입력 영역 */}
+                <div className="flex min-h-0 flex-1 flex-col gap-3 p-4">
+                  <div className="flex gap-2 overflow-x-auto pb-2">
+                    {EXAMPLE_PRESETS.map((pill) => (
+                      <button
+                        key={pill.id}
+                        type="button"
+                        className="flex-shrink-0 rounded-full border border-border/80 bg-card px-3 py-1.5 text-sm text-foreground"
+                      >
+                        {pill.label}
+                      </button>
+                    ))}
+                  </div>
+
+                  <textarea
+                    value={inputText}
+                    readOnly
+                    className="min-h-0 w-full flex-1 resize-none rounded-2xl border-2 border-border bg-card px-4 py-3 text-foreground placeholder:text-muted-foreground"
+                    rows={4}
+                    placeholder="여기에 텍스트를 입력하거나 붙여넣기 ..."
+                  />
+                </div>
+
+                {/* Center: 변환하기 버튼 */}
+                <div className="shrink-0 px-4 pb-4 pt-2">
+                  <div className="w-full rounded-full bg-gradient-to-r from-[var(--vibrant-violet)] to-[var(--electric-blue)] px-6 py-3.5 font-semibold text-white shadow-lg">
+                    <span className="inline-flex items-center justify-center gap-2">
+                      <Sparkles className="h-5 w-5" />
+                      변환하기
+                    </span>
+                  </div>
+                </div>
+
+                {/* Bottom: 결과 영역 */}
+                <div className="flex min-h-0 flex-1 flex-col gap-4 p-4">
+                  {/* 플랫폼 탭 선택기 */}
+                  <div className="flex gap-2 rounded-2xl border border-border/80 bg-card p-1">
+                    <div
+                      className={`flex flex-1 items-center justify-center gap-2 rounded-xl px-3 py-2 text-xs font-medium ${
                         activeTab === "instagram"
-                          ? "bg-gradient-to-r from-pink-500 to-orange-500 text-white shadow-md"
-                          : "text-gray-600"
+                          ? "bg-gradient-to-r from-pink-900 to-orange-800 text-white shadow-lg shadow-pink-500/10"
+                          : "text-muted-foreground"
                       }`}
                     >
-                      <Instagram className="h-3.5 w-3.5" />
+                      <Instagram className="h-4 w-4" />
                       Instagram
-                    </button>
-                    <button
-                      onClick={() => handleTabChange("twitter")}
-                      className={`flex items-center gap-1.5 rounded-xl px-4 py-2 text-xs font-medium transition-all duration-200 ${
+                    </div>
+                    <div
+                      className={`flex flex-1 items-center justify-center gap-2 rounded-xl px-3 py-2 text-xs font-medium ${
                         activeTab === "twitter"
-                          ? "bg-gradient-to-r from-zinc-800 to-black text-white shadow-md"
-                          : "text-gray-600"
+                          ? "bg-gradient-to-r from-zinc-800 to-black text-white shadow-lg shadow-black/30"
+                          : "text-muted-foreground"
                       }`}
                     >
-                      <XIcon className="h-3.5 w-3.5" />
+                      <XIcon className="h-4 w-4" />
                       X
-                    </button>
-                  </div>
-                </div>
-
-                {/* Input Section */}
-                <div className="mb-4 flex-none">
-                  <div className="mb-3 flex items-center gap-2">
-                    <div className="h-2 w-2 rounded-full bg-gradient-to-r from-[var(--vibrant-violet)] to-[var(--electric-blue)]" />
-                    <span className="text-sm font-semibold text-foreground">입력</span>
-                  </div>
-                  <div className="rounded-2xl border border-border bg-card p-4">
-                    <textarea
-                      value={inputText}
-                      onChange={(e) => {
-                        setInputText(e.target.value);
-                        setActivePresetId(null);
-                      }}
-                      className="w-full resize-none bg-transparent text-sm leading-relaxed text-foreground focus:outline-none"
-                      rows={4}
-                      placeholder="변환할 내용을 입력하세요..."
-                    />
-                  </div>
-                </div>
-
-                {/* Conversion Icon */}
-                <div className="my-4 flex justify-center">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-r from-[var(--vibrant-violet)] to-[var(--electric-blue)] shadow-lg shadow-purple-500/30">
-                    <ArrowDown className="h-6 w-6 text-white" />
-                  </div>
-                </div>
-
-                {/* Output Section */}
-                <div className="flex flex-col">
-                  <div className="mb-3 flex items-center gap-2">
-                    <div className="h-2 w-2 rounded-full bg-gradient-to-r from-[var(--vibrant-violet)] to-[var(--electric-blue)]" />
-                    <span className="text-sm font-semibold text-foreground">결과</span>
-                  </div>
-                  <div className="rounded-2xl border border-border bg-card p-4">
-                    <div className="whitespace-pre-wrap text-sm leading-relaxed text-foreground">
-                      {outputText}
                     </div>
+                  </div>
+
+                  <div className="min-h-0 flex-1 overflow-y-auto rounded-2xl border-2 border-border bg-card px-4 py-3 shadow-sm">
+                    {outputText ? (
+                      <div className="whitespace-pre-wrap leading-relaxed text-foreground">
+                        {outputText}
+                      </div>
+                    ) : (
+                      <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
+                        변환된 내용이 여기에 표시됩니다
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
