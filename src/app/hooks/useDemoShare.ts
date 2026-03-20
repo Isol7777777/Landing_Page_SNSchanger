@@ -16,17 +16,7 @@ type UseDemoShareParams = {
   buildTwitterMock: (input: string) => string;
 };
 
-const X_SHARE_CAPTIONS = [
-  "내 아무말을 인스타 감성으로 세탁해드립니다. 본격 SNS 번역기 가동 중! ☕✨",
-  "아무말 던졌는데 SNS 맞춤 문구로 변환 완료. 이게 바로 탭탭 매직.",
-  "오늘도 아무말을 콘텐츠로 바꾸는 중. SNS 번역기 테스트 해보세요!",
-];
-
-const THREADS_SHARE_CAPTIONS = [
-  "아무말 한 줄이 감성 글이 되는 중. TapTap으로 변환해봤어요.",
-  "생각나는 문장을 SNS 스타일로 바꿔봤어요. 공유해봅니다.",
-  "오늘의 문장을 인스타/X 스타일로 변환 완료. 여러분도 해보세요!",
-];
+const SHARE_CAPTION = "내 아무말을 SNS 감성따라 세탁해드립니다. 본격 SNS 번역기 가동 중!";
 
 export function useDemoShare({
   sectionRef,
@@ -281,7 +271,7 @@ export function useDemoShare({
         }
         await navigator.share({
           title: "TapTap 공유",
-          text: "SNS 번역 결과를 확인해보세요!",
+          text: SHARE_CAPTION,
           url: shareUrl,
           files: [imageFile],
         });
@@ -296,15 +286,11 @@ export function useDemoShare({
     }
   };
 
-  const pickRandomCaption = (list: string[]) =>
-    list[Math.floor(Math.random() * list.length)] ?? list[0];
-
   const handleShareToX = async () => {
     try {
       const shareUrl = await getOrCreateShareUrl();
-      const caption = pickRandomCaption(X_SHARE_CAPTIONS);
       const intentUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
-        caption
+        SHARE_CAPTION
       )}&url=${encodeURIComponent(shareUrl)}`;
       window.open(intentUrl, "_blank", "noopener,noreferrer");
     } catch {
@@ -315,8 +301,7 @@ export function useDemoShare({
   const handleShareToThreads = async () => {
     try {
       const shareUrl = await getOrCreateShareUrl();
-      const caption = pickRandomCaption(THREADS_SHARE_CAPTIONS);
-      const text = `${caption}\n${shareUrl}`;
+      const text = `${SHARE_CAPTION}\n${shareUrl}`;
       const threadsUrl = `https://www.threads.net/intent/post?text=${encodeURIComponent(
         text
       )}`;

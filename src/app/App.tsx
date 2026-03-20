@@ -20,7 +20,7 @@ const Footer = lazy(() =>
 
 export default function App() {
   return (
-    <div className="min-h-screen overflow-x-hidden bg-white">
+    <div className="min-h-screen overflow-x-hidden bg-background text-foreground">
       <Header />
       <Hero />
       <Suspense fallback={<div className="h-24" />}>

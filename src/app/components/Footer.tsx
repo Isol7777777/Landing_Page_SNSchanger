@@ -3,7 +3,7 @@ import svgPaths from "../../imports/svg-eir802r15e";
 
 export function Footer() {
   return (
-    <footer className="relative bg-gray-900 px-4 py-12 md:px-8 md:py-16 lg:px-16">
+    <footer className="relative bg-background px-4 py-12 md:px-8 md:py-16 lg:px-16">
       <div className="mx-auto max-w-5xl">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -63,16 +63,16 @@ export function Footer() {
           </div>
 
           {/* Description */}
-          <p className="max-w-2xl leading-relaxed text-gray-400">
+          <p className="max-w-2xl leading-relaxed text-muted-foreground">
             AI 기반 SNS 통합 포스팅으로 여러분의 콘텐츠 발행을 더욱 쉽고 빠르게 만들어드립니다.
           </p>
-          <p className="max-w-2xl leading-relaxed text-gray-400">
+          <p className="max-w-2xl leading-relaxed text-muted-foreground">
             하나의 메모가 모든 플랫폼에 최적화된 콘텐츠로 탄생합니다.
           </p>
 
           {/* Copyright */}
-          <div className="border-t border-gray-800 pt-8">
-            <p className="text-sm text-gray-500">© 2026 TapTap Inc. All rights reserved.</p>
+          <div className="border-t border-border pt-8">
+            <p className="text-sm text-muted-foreground">© 2026 TapTap Inc. All rights reserved.</p>
           </div>
         </motion.div>
       </div>

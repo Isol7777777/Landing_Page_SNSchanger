@@ -65,9 +65,9 @@ export function CTASection() {
   return (
     <section
       id="cta-section"
-      className="py-24 px-6 bg-gradient-to-br from-purple-600 via-[#8A2BE2] to-blue-600"
+      className="py-24 px-6 bg-gradient-to-br from-purple-800 via-[#8A2BE2] to-blue-600"
     >
-      <div className="max-w-5xl mx-auto bg-white/10 backdrop-blur-xl rounded-[40px] p-8 md:p-16 border border-white/20 shadow-2xl">
+      <div className="max-w-5xl mx-auto bg-card/30 backdrop-blur-xl rounded-[40px] p-8 md:p-16 border border-border/10 shadow-2xl">
         <div className="text-center mb-12">
           <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
             가장 나다운 콘텐츠 발행의 시작
@@ -80,7 +80,7 @@ export function CTASection() {
         <form onSubmit={handleSubmit} className="space-y-8">
           {/* 휴대폰 번호 입력 */}
           <div className="relative">
-            <Phone className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-400 size-6" />
+            <Phone className="absolute left-6 top-1/2 -translate-y-1/2 text-muted-foreground size-6" />
             <input
               type="tel"
               value={phone}
@@ -88,13 +88,13 @@ export function CTASection() {
                 setPhone(e.target.value.replace(/[^0-9]/g, ""))
               }
               placeholder="휴대전화 번호를 입력하세요 (- 제외)"
-              className="w-full pl-16 pr-6 py-6 bg-white rounded-2xl text-lg focus:ring-4 focus:ring-purple-400/30 outline-none transition-all text-gray-900"
+              className="w-full pl-16 pr-6 py-6 bg-card rounded-2xl text-lg focus:ring-4 focus:ring-purple-400/30 outline-none transition-all text-foreground placeholder:text-muted-foreground"
               required
             />
           </div>
 
           {/* 약관 동의 */}
-          <div className="space-y-4 bg-white/5 rounded-2xl p-6 border border-white/10">
+          <div className="space-y-4 bg-card/20 rounded-2xl p-6 border border-border/5">
             {/* 모두 동의 (개별 동의 체크박스와 동일한 UI) */}
             <label className="flex items-center gap-3 cursor-pointer">
               <input
@@ -106,12 +106,8 @@ export function CTASection() {
                   setAgreements({ age: next, privacy: next, marketing: next });
                 }}
               />
-              <div
-                className={`size-6 rounded-md border-2 flex items-center justify-center transition-all ${
-                  allAgreed ? "bg-white border-white" : "border-white/30"
-                }`}
-              >
-                {allAgreed && <Check className="size-4 text-purple-600" />}
+              <div className="flex size-6 items-center justify-center rounded-md border-2 border-white bg-gray-500 transition-all">
+                {allAgreed && <Check className="size-4 text-white" />}
               </div>
               <span className="text-white font-bold leading-relaxed">
                 모두 동의합니다.
@@ -128,13 +124,9 @@ export function CTASection() {
                   setAgreements((prev) => ({ ...prev, age: !prev.age }))
                 }
               />
-              <div
-                className={`size-6 rounded-md border-2 flex items-center justify-center transition-all ${
-                  agreements.age ? "bg-white border-white" : "border-white/30"
-                }`}
-              >
+              <div className="flex size-6 items-center justify-center rounded-md border-2 border-white bg-gray-500 transition-all">
                 {agreements.age && (
-                  <Check className="size-4 text-purple-600" />
+                  <Check className="size-4 text-white" />
                 )}
               </div>
               <span className="text-white font-medium">
@@ -157,15 +149,9 @@ export function CTASection() {
                       }))
                     }
                   />
-                  <div
-                    className={`size-6 rounded-md border-2 flex items-center justify-center transition-all ${
-                      agreements.privacy
-                        ? "bg-white border-white"
-                        : "border-white/30"
-                    }`}
-                  >
+                  <div className="flex size-6 items-center justify-center rounded-md border-2 border-white bg-gray-500 transition-all">
                     {agreements.privacy && (
-                      <Check className="size-4 text-purple-600" />
+                      <Check className="size-4 text-white" />
                     )}
                   </div>
                   <span className="text-white font-medium">
@@ -203,15 +189,9 @@ export function CTASection() {
                     }))
                   }
                 />
-                <div
-                  className={`size-6 rounded-md border-2 flex items-center justify-center transition-all ${
-                    agreements.marketing
-                      ? "bg-white border-white"
-                      : "border-white/30"
-                  }`}
-                >
+                <div className="flex size-6 items-center justify-center rounded-md border-2 border-white bg-gray-500 transition-all">
                   {agreements.marketing && (
-                    <Check className="size-4 text-purple-600" />
+                    <Check className="size-4 text-white" />
                   )}
                 </div>
                 <span className="text-white font-medium">
@@ -232,8 +212,8 @@ export function CTASection() {
             disabled={!isSubmittable || isSubmitting}
             className={`w-full py-6 rounded-2xl text-xl font-bold transition-all flex items-center justify-center gap-3 shadow-2xl ${
               isSubmittable && !isSubmitting
-                ? "bg-gray-900 text-white hover:bg-gray-800"
-                : "bg-white/20 text-white/40 cursor-not-allowed"
+                ? "bg-[var(--foreground)] text-[var(--background)] hover:opacity-90"
+                : "bg-[var(--foreground)]/10 text-[var(--foreground)]/40 cursor-not-allowed"
             }`}
           >
             {isSubmitting ? "전송 중..." : "사전 예약하고 혜택 받기"}

@@ -104,7 +104,7 @@ export function ProblemSection() {
   ];
 
   return (
-    <section className="relative bg-white px-4 py-16 md:px-8 md:py-24 lg:px-16">
+    <section className="relative bg-background px-4 py-16 md:px-8 md:py-24 lg:px-16">
       <div className="mx-auto max-w-5xl">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -113,7 +113,7 @@ export function ProblemSection() {
           transition={{ duration: 0.6 }}
           className="mb-12 text-center md:mb-16"
         >
-          <h2 className="mb-4 text-4xl md:text-5xl font-bold text-gray-900">
+          <h2 className="mb-4 text-4xl md:text-5xl font-bold text-foreground">
             콘텐츠는 있는데,
           </h2>
           <h2
@@ -141,7 +141,7 @@ export function ProblemSection() {
               key={index}
               variants={cardVariants}
               whileHover={{ y: -8, transition: { duration: 0.3 } }}
-              className="group relative overflow-hidden rounded-3xl border border-gray-200/50 bg-gradient-to-br from-gray-50 to-gray-100/50 p-8 backdrop-blur-sm transition-shadow hover:shadow-xl"
+              className="group relative overflow-hidden rounded-3xl border border-border/80 bg-card p-8 backdrop-blur-sm transition-shadow hover:shadow-xl dark:bg-primary/14"
             >
               <motion.div
                 whileHover={{ scale: 1.1, rotate: 5 }}
@@ -150,10 +150,10 @@ export function ProblemSection() {
               >
                 {problem.icon}
               </motion.div>
-              <h3 className="mb-4 text-2xl font-bold text-gray-900">
+              <h3 className="mb-4 text-2xl font-bold text-foreground">
                 {problem.title}
               </h3>
-              <p className="leading-relaxed text-gray-600">
+              <p className="leading-relaxed text-muted-foreground">
                 {problem.description}
               </p>
             </motion.div>

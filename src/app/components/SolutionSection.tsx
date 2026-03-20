@@ -22,7 +22,7 @@ const itemVariants = {
 
 export function SolutionSection() {
   return (
-    <section className="relative bg-white px-4 py-16 md:px-8 md:py-24 lg:px-16">
+    <section className="relative bg-background px-4 py-16 md:px-8 md:py-24 lg:px-16">
       <div className="mx-auto max-w-5xl">
         {/* Section Header */}
         <motion.div
@@ -32,7 +32,7 @@ export function SolutionSection() {
           transition={{ duration: 0.6 }}
           className="mb-16 text-center"
         >
-          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-purple-200/50 bg-gradient-to-r from-purple-50 to-blue-50 px-4 py-2">
+          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-purple-200/50 bg-card px-4 py-2 dark:border-border/80 dark:bg-primary/14">
             <svg className="size-4" fill="none" viewBox="0 0 16 16">
               <g>
                 <path d={svgPaths.p2b853180} fill="#6341EA" />
@@ -51,11 +51,11 @@ export function SolutionSection() {
               TapTap의 해결책
             </span>
           </div>
-          <h2 className="text-4xl md:text-5xl font-bold text-gray-900">
+          <h2 className="text-4xl md:text-5xl font-bold text-foreground">
             <span className="bg-gradient-to-r from-purple-600 to-blue-500 bg-clip-text text-transparent">TapTap</span>
             <span>이 모든 걸</span>
           </h2>
-          <p className="mt-4 text-4xl md:text-5xl font-bold text-gray-900">
+          <p className="mt-4 text-4xl md:text-5xl font-bold text-foreground">
             완벽하게 해결합니다
           </p>
         </motion.div>
@@ -74,24 +74,24 @@ export function SolutionSection() {
             className="grid grid-cols-1 items-center gap-8 lg:grid-cols-2 lg:gap-12"
           >
             <div className="space-y-6">
-              <div className="inline-flex items-center gap-2 rounded-full border border-purple-200/50 bg-purple-50/50 px-4 py-2">
+              <div className="inline-flex items-center gap-2 rounded-full border border-purple-200/50 bg-card px-4 py-2 text-foreground dark:border-border/80 dark:bg-primary/14">
                 <svg className="size-5" fill="none" viewBox="0 0 20 20">
-                  <path d={svgPaths.p25397b80} stroke="#8A2BE2" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.66667" />
-                  <path d={svgPaths.p2c4f400} stroke="#8A2BE2" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.66667" />
-                  <path d={svgPaths.p2241fff0} stroke="#8A2BE2" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.66667" />
-                  <path d={svgPaths.pae3c380} stroke="#8A2BE2" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.66667" />
+                  <path d={svgPaths.p25397b80} stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.66667" />
+                  <path d={svgPaths.p2c4f400} stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.66667" />
+                  <path d={svgPaths.p2241fff0} stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.66667" />
+                  <path d={svgPaths.pae3c380} stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.66667" />
                 </svg>
-                <span className="text-sm font-semibold text-purple-600">Feature 01</span>
+                <span className="text-sm font-semibold text-foreground">Feature 01</span>
               </div>
 
-              <h3 className="text-4xl font-bold text-gray-900">
+              <h3 className="text-4xl font-bold text-foreground">
                 플랫폼별 페르소나{" "}
                 <span className="bg-gradient-to-r from-purple-600 to-blue-500 bg-clip-text text-transparent">
                   자동 변환
                 </span>
               </h3>
 
-              <p className="text-lg leading-relaxed text-gray-600 md:text-xl">
+              <p className="text-lg leading-relaxed text-muted-foreground md:text-xl">
                 하나의 메모가 인스타그램의 감성적인 톤, X의 간결한 메시지, 네이버 블로그의 친근한 분위기로 자동 변환됩니다.{" "}
                 각 플랫폼의 특성을 완벽하게 이해하는 AI가 최적의 콘텐츠를 생성합니다.
               </p>
@@ -107,7 +107,7 @@ export function SolutionSection() {
                     className="flex items-center gap-3"
                   >
                     <div className="size-2 rounded-full bg-gradient-to-b from-purple-600 to-blue-500" />
-                    <span className="text-gray-700">{item}</span>
+                    <span className="text-foreground">{item}</span>
                   </motion.li>
                 ))}
               </ul>
@@ -116,7 +116,7 @@ export function SolutionSection() {
             <motion.div
               whileHover={{ scale: 1.02 }}
               transition={{ duration: 0.3 }}
-              className="relative rounded-3xl border border-gray-100 bg-white p-8 shadow-2xl"
+              className="relative rounded-3xl border border-border/100 bg-card p-8 shadow-2xl dark:border-border/80 dark:bg-primary/14"
             >
               <div className="absolute -right-6 -top-6 size-24 rounded-full bg-gradient-to-br from-purple-200/30 to-blue-200/30 blur-3xl" />
               <div className="relative space-y-4">
@@ -164,15 +164,15 @@ export function SolutionSection() {
                     viewport={{ once: true }}
                     transition={{ delay: 0.2 + i * 0.1 }}
                     whileHover={{ x: 4 }}
-                    className="rounded-2xl bg-gradient-to-br from-gray-50 to-white p-4 shadow-sm transition-shadow hover:shadow-md"
+                    className="rounded-2xl bg-card p-4 shadow-sm transition-shadow hover:shadow-md dark:bg-primary/14"
                   >
                     <div className="mb-2 flex items-center gap-3">
                       <div className={`flex size-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br ${item.gradient} p-2.5 shadow-lg`}>
                         {item.icon}
                       </div>
                       <div className="flex-1">
-                        <p className="text-xs font-semibold text-gray-500">{item.platform}</p>
-                        <p className="mt-1 text-sm text-gray-700">{item.text}</p>
+                        <p className="text-xs font-semibold text-muted-foreground">{item.platform}</p>
+                        <p className="mt-1 text-sm text-foreground">{item.text}</p>
                       </div>
                     </div>
                   </motion.div>
@@ -189,7 +189,7 @@ export function SolutionSection() {
             <motion.div
               whileHover={{ scale: 1.02 }}
               transition={{ duration: 0.3 }}
-              className="relative order-2 rounded-3xl border border-gray-100 bg-white p-8 shadow-2xl lg:order-1"
+              className="relative order-2 rounded-3xl border border-border/100 bg-card p-8 shadow-2xl lg:order-1 dark:border-border/80 dark:bg-primary/14"
             >
               <div className="absolute -left-6 -bottom-6 size-24 rounded-full bg-gradient-to-br from-blue-200/30 to-purple-200/30 blur-3xl" />
               <div className="relative">
@@ -202,7 +202,7 @@ export function SolutionSection() {
                       viewport={{ once: true }}
                       transition={{ delay: i * 0.1 }}
                       whileHover={{ scale: 1.05, rotate: i % 2 === 0 ? 2 : -2 }}
-                      className="relative aspect-square overflow-hidden rounded-2xl bg-gradient-to-br from-purple-100 via-pink-100 to-blue-100"
+                      className="relative aspect-square overflow-hidden rounded-2xl bg-gradient-to-br from-purple-100 via-pink-100 to-blue-100 dark:from-purple-900/40 dark:via-pink-900/35 dark:to-blue-900/40"
                     >
                       <div className="flex size-full items-center justify-center">
                         <svg className="size-8 opacity-80" fill="none" viewBox="0 0 32 32">
@@ -220,32 +220,98 @@ export function SolutionSection() {
                     </motion.div>
                   ))}
                 </div>
-                <div className="rounded-xl border border-purple-200/50 bg-gradient-to-r from-purple-50 to-blue-50 p-4">
+              <div
+                className="rounded-xl border border-purple-200/50 bg-gradient-to-r from-purple-50 to-blue-50 p-4 dark:border-border/90 dark:from-[var(--secondary)] dark:to-[var(--accent)]"
+                >
                   <p className="text-sm">
-                    <span className="font-semibold text-purple-600">AI 추천:</span>{" "}
-                    <span className="text-gray-700">이 위치에는 킹받는 이미지가 효과적이에요!</span>
+                    <span className="font-semibold text-foreground">AI 추천:</span>{" "}
+                    <span className="text-foreground">
+                      이 위치에는 킹받는 이미지가 효과적이에요!
+                    </span>
                   </p>
                 </div>
               </div>
             </motion.div>
 
             <div className="order-1 space-y-6 lg:order-2">
-              <div className="inline-flex items-center gap-2 rounded-full border border-blue-200/50 bg-blue-50/50 px-4 py-2">
-                <svg className="size-5" fill="none" viewBox="0 0 20 20">
-                  <path d={svgPaths.pc921000} stroke="#007BFF" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.66667" />
-                  <path d={svgPaths.p16bbd80} stroke="#007BFF" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.66667" />
+              <div className="inline-flex items-center gap-2 rounded-full border border-blue-200/50 bg-card px-4 py-2 text-foreground dark:border-border/80 dark:bg-primary/14">
+                <svg
+                  className="size-5 shrink-0 text-blue-600 dark:text-white"
+                  width={20}
+                  height={20}
+                  viewBox="0 0 20 20"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  aria-hidden
+                >
+                  <path
+                    d="M18.0334 3.03341L16.9667 1.96674C16.8729 1.87201 16.7613 1.7968 16.6383 1.74548C16.5153 1.69415 16.3833 1.66772 16.25 1.66772C16.1167 1.66772 15.9848 1.69415 15.8617 1.74548C15.7387 1.7968 15.6271 1.87201 15.5334 1.96674L1.96668 15.5334C1.87195 15.6272 1.79674 15.7388 1.74542 15.8618C1.69409 15.9848 1.66766 16.1168 1.66766 16.2501C1.66766 16.3834 1.69409 16.5153 1.74542 16.6384C1.79674 16.7614 1.87195 16.873 1.96668 16.9667L3.03335 18.0334C3.12653 18.1292 3.23796 18.2053 3.36105 18.2572C3.48415 18.3092 3.6164 18.336 3.75002 18.336C3.88363 18.336 4.01589 18.3092 4.13898 18.2572C4.26207 18.2053 4.3735 18.1292 4.46668 18.0334L18.0334 4.46674C18.1291 4.37356 18.2052 4.26213 18.2572 4.13904C18.3092 4.01595 18.3359 3.88369 18.3359 3.75008C18.3359 3.61647 18.3092 3.48421 18.2572 3.36112C18.2052 3.23802 18.1291 3.1266 18.0334 3.03341Z"
+                    stroke="currentColor"
+                    strokeWidth="1.66667"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <path
+                    d="M11.6667 5.83325L14.1667 8.33325"
+                    stroke="currentColor"
+                    strokeWidth="1.66667"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <path
+                    d="M4.16669 5V8.33333"
+                    stroke="currentColor"
+                    strokeWidth="1.66667"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <path
+                    d="M15.8333 11.6667V15.0001"
+                    stroke="currentColor"
+                    strokeWidth="1.66667"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <path
+                    d="M8.33331 1.66675V3.33341"
+                    stroke="currentColor"
+                    strokeWidth="1.66667"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <path
+                    d="M5.83333 6.66675H2.5"
+                    stroke="currentColor"
+                    strokeWidth="1.66667"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <path
+                    d="M17.5 13.3333H14.1667"
+                    stroke="currentColor"
+                    strokeWidth="1.66667"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <path
+                    d="M9.16667 2.5H7.5"
+                    stroke="currentColor"
+                    strokeWidth="1.66667"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
                 </svg>
-                <span className="text-sm font-semibold text-blue-600">Feature 02</span>
+                <span className="text-sm font-semibold text-foreground">Feature 02</span>
               </div>
 
-              <h3 className="text-4xl font-bold text-gray-900">
+              <h3 className="text-4xl font-bold text-foreground">
                 위트 있는 비주얼{" "}
                 <span className="bg-gradient-to-r from-purple-600 to-blue-500 bg-clip-text text-transparent">
                   가이드
                 </span>
               </h3>
 
-              <p className="text-lg leading-relaxed text-gray-600 md:text-xl">
+              <p className="text-lg leading-relaxed text-muted-foreground md:text-xl">
                 사용자의 이미지는 스마트하게 배치하고, 부족한 감성은 '밈(Meme)'으로 채워줍니다. 콘텐츠 흐름에 맞는 자동 이미지 배치로 시각적 리듬감이 살아있는 레이아웃을 완성합니다.
               </p>
 
@@ -260,7 +326,7 @@ export function SolutionSection() {
                     className="flex items-center gap-3"
                   >
                     <div className="size-2 rounded-full bg-gradient-to-b from-purple-600 to-blue-500" />
-                    <span className="text-gray-700">{item}</span>
+                    <span className="text-foreground">{item}</span>
                   </motion.li>
                 ))}
               </ul>
@@ -273,21 +339,21 @@ export function SolutionSection() {
             className="grid grid-cols-1 items-center gap-8 lg:grid-cols-2 lg:gap-12"
           >
             <div className="space-y-6">
-              <div className="inline-flex items-center gap-2 rounded-full border border-purple-200/50 bg-purple-50/50 px-4 py-2">
+              <div className="inline-flex items-center gap-2 rounded-full border border-purple-200/50 bg-card px-4 py-2 text-foreground dark:border-border/80 dark:bg-primary/14">
                 <svg className="size-5" fill="none" viewBox="0 0 20 20">
-                  <path d={svgPaths.p24941500} stroke="#8A2BE2" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.66667" />
+                  <path d={svgPaths.p24941500} stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.66667" />
                 </svg>
-                <span className="text-sm font-semibold text-purple-600">Feature 03</span>
+                <span className="text-sm font-semibold text-foreground">Feature 03</span>
               </div>
 
-              <h3 className="text-4xl font-bold text-gray-900">
+              <h3 className="text-4xl font-bold text-foreground">
                 나만의 아이덴티티{" "}
                 <span className="bg-gradient-to-r from-purple-600 to-blue-500 bg-clip-text text-transparent">
                   완벽 유지
                 </span>
               </h3>
 
-              <p className="text-lg leading-relaxed text-gray-600 md:text-xl">
+              <p className="text-lg leading-relaxed text-muted-foreground md:text-xl">
                 당신의 고유한 색깔은 지키되, 플랫폼과 취향에 맞춰 자유롭게 변신하세요. 핵심 내용은 유지하면서 각 채널에 최적화된 문체로 다듬어드립니다.
               </p>
 
@@ -302,7 +368,7 @@ export function SolutionSection() {
                     className="flex items-center gap-3"
                   >
                     <div className="size-2 rounded-full bg-gradient-to-b from-purple-600 to-blue-500" />
-                    <span className="text-gray-700">{item}</span>
+                    <span className="text-foreground">{item}</span>
                   </motion.li>
                 ))}
               </ul>
@@ -311,7 +377,7 @@ export function SolutionSection() {
             <motion.div
               whileHover={{ scale: 1.02 }}
               transition={{ duration: 0.3 }}
-              className="relative rounded-3xl border border-gray-100 bg-white p-8 shadow-2xl"
+              className="relative rounded-3xl border border-border/80 bg-card p-8 shadow-2xl dark:bg-primary/14"
             >
               <div className="absolute -right-6 -top-6 size-24 rounded-full bg-gradient-to-br from-purple-200/30 to-blue-200/30 blur-3xl" />
               <div className="relative space-y-8">
@@ -330,7 +396,7 @@ export function SolutionSection() {
                     <span className="text-3xl">✨</span>
                   </motion.div>
                 </div>
-                <h4 className="text-center text-lg font-bold text-gray-900">문체 커스터마이징</h4>
+                <h4 className="text-center text-lg font-bold text-foreground">문체 커스터마이징</h4>
                 <div className="space-y-4">
                   {[
                     { label: "친근함", value: 85 },
@@ -346,10 +412,10 @@ export function SolutionSection() {
                       className="space-y-2"
                     >
                       <div className="flex items-center justify-between text-sm">
-                        <span className="font-semibold text-gray-700">{item.label}</span>
-                        <span className="text-gray-500">{item.value}%</span>
+                        <span className="font-semibold text-foreground">{item.label}</span>
+                        <span className="text-muted-foreground">{item.value}%</span>
                       </div>
-                      <div className="h-3 overflow-hidden rounded-full bg-gray-100">
+                      <div className="h-3 overflow-hidden rounded-full bg-border">
                         <motion.div
                           initial={{ width: 0 }}
                           whileInView={{ width: `${item.value}%` }}
