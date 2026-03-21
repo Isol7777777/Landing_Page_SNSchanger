@@ -10,6 +10,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { useDemoShare } from "../hooks/useDemoShare";
+import { translateWithPersonaApi, type PersonaTranslation } from "../../lib/personaTranslateService";
 
 // 💡 AI 토큰 절감 프리셋
 export const EXAMPLE_PRESETS = [
@@ -97,6 +98,7 @@ export function DemoSection() {
   const [showShareMenu, setShowShareMenu] = useState(false);
   const [isTranslating, setIsTranslating] = useState(false);
   const [isConverted, setIsConverted] = useState(false);
+  const [aiResult, setAiResult] = useState<PersonaTranslation | null>(null);
 
   const handleTranslate = async () => {
     if (!inputText.trim()) return;
@@ -104,6 +106,7 @@ export function DemoSection() {
     const preset =
       activePresetId != null ? EXAMPLE_PRESETS.find((p) => p.id === activePresetId) : null;
     if (preset) {
+      setAiResult(null);
       setOutputText(
         activeTab === "instagram" ? preset.results.instagram : preset.results.twitter
       );
@@ -113,16 +116,18 @@ export function DemoSection() {
     }
 
     setIsTranslating(true);
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 800));
-
-    setOutputText(
-      activeTab === "instagram"
-        ? buildInstagramMock(inputText)
-        : buildTwitterMock(inputText)
-    );
-    setIsConverted(true);
-    setIsTranslating(false);
+    try {
+      const translated = await translateWithPersonaApi(inputText);
+      setAiResult(translated);
+      setOutputText(activeTab === "instagram" ? translated.instagram : translated.twitter);
+      setIsConverted(true);
+      setShowShareMenu(false);
+    } catch (error) {
+      console.error("Persona translate error", error);
+      alert("변환 중 오류가 발생했습니다. 서버 함수/환경변수 설정을 확인해주세요.");
+    } finally {
+      setIsTranslating(false);
+    }
   };
 
   const handleExampleClick = (presetId: number) => {
@@ -130,6 +135,7 @@ export function DemoSection() {
     if (!preset) return;
 
     setActivePresetId(preset.id);
+    setAiResult(null);
     setInputText(preset.prompt);
     setOutputText("");
     setIsConverted(false);
@@ -147,6 +153,12 @@ export function DemoSection() {
       if (!preset) return;
 
       setOutputText(tab === "instagram" ? preset.results.instagram : preset.results.twitter);
+      setIsConverted(true);
+      return;
+    }
+
+    if (aiResult) {
+      setOutputText(tab === "instagram" ? aiResult.instagram : aiResult.twitter);
       setIsConverted(true);
       return;
     }
@@ -410,6 +422,7 @@ export function DemoSection() {
                     setInputText("");
                     setOutputText("");
                     setIsConverted(false);
+                    setAiResult(null);
                     setActivePresetId(null);
                     setShowShareMenu(false);
                   }}
@@ -585,6 +598,7 @@ export function DemoSection() {
                       setInputText("");
                       setOutputText("");
                       setIsConverted(false);
+                      setAiResult(null);
                       setActivePresetId(null);
                       setShowShareMenu(false);
                     }}
