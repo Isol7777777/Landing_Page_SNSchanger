@@ -91,6 +91,10 @@ function buildNaverMock(input: string): string {
   return `${short}\n\n오늘 있었던 일을 이렇게 적어봤어요. 비슷한 경험 있으신가요?\n\n앞으로도 가끔 일상을 여기에 남겨보려고 합니다.`;
 }
 
+/** 모바일(sm 미만) — 변환하기 / 공유하기 동일 스타일 */
+const MOBILE_PRIMARY_CTA_CLASS =
+  "flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[var(--vibrant-violet)] to-[var(--electric-blue)] px-6 py-4 text-base font-semibold text-white shadow-lg transition-all duration-200 hover:scale-[1.02] hover:shadow-purple-500/40 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100";
+
 export function DemoSection() {
   const sectionRef = useRef<HTMLElement | null>(null);
   const [inputText, setInputText] = useState("");
@@ -477,24 +481,25 @@ export function DemoSection() {
               {/* 3. 하단 액션 버튼 (변환하기) */}
               <div className="shrink-0">
                 <button
+                  type="button"
                   onClick={handleTranslate}
                   disabled={!inputText.trim() || isTranslating}
-                  className="flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[var(--vibrant-violet)] to-[var(--electric-blue)] px-6 py-4 font-semibold text-white shadow-lg transition-all hover:scale-[1.02] hover:shadow-purple-500/40 disabled:cursor-not-allowed disabled:opacity-50"
+                  className={MOBILE_PRIMARY_CTA_CLASS}
                 >
                   {isTranslating ? (
                     <>
                       <motion.span
                         animate={{ rotate: 360 }}
                         transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                        className="inline-flex"
+                        className="inline-flex shrink-0"
                       >
-                        <Sparkles className="h-5 w-5" />
+                        <Sparkles className="h-5 w-5 shrink-0" />
                       </motion.span>
                       변환 중...
                     </>
                   ) : (
                     <>
-                      <Sparkles className="h-5 w-5" />
+                      <Sparkles className="h-5 w-5 shrink-0" />
                       변환하기
                     </>
                   )}
@@ -505,9 +510,9 @@ export function DemoSection() {
             {/* ==========================================
                 하단: 결과 영역 (Bottom Half)
             ========================================== */}
-            <div className="flex min-h-0 flex-1 flex-col gap-3">
+            <div className="flex min-h-0 flex-1 flex-col">
               {/* 1. 상단 컨트롤 (플랫폼 탭) */}
-              <div className="flex shrink-0 gap-2 rounded-2xl border border-border/80 bg-card p-1">
+              <div className="mb-3 flex shrink-0 gap-2 rounded-2xl border border-border/80 bg-card p-1">
                 <button
                   type="button"
                   onClick={() => handleTabChange("instagram")}
@@ -534,36 +539,39 @@ export function DemoSection() {
                 </button>
               </div>
 
-              {/* 2. 메인 박스 (결과창) */}
-              <div className="min-h-0 w-full flex-1 overflow-y-auto rounded-2xl border-2 border-border bg-card px-4 py-3 shadow-sm">
-                {outputText ? (
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    className="whitespace-pre-wrap leading-relaxed text-foreground"
-                  >
-                    {outputText}
-                  </motion.div>
-                ) : (
-                  <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
-                    변환된 내용이 여기에 표시됩니다
-                  </div>
-                )}
+              {/* 2. 결과창 — flex-1만 스크롤, 공유 버튼과 레이어 분리 */}
+              <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-2xl border-2 border-border bg-card shadow-sm">
+                <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 py-3">
+                  {outputText ? (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      className="whitespace-pre-wrap leading-relaxed text-foreground"
+                    >
+                      {outputText}
+                    </motion.div>
+                  ) : (
+                    <div className="flex min-h-[5rem] items-center justify-center text-sm text-muted-foreground">
+                      변환된 내용이 여기에 표시됩니다
+                    </div>
+                  )}
+                </div>
               </div>
 
-              {/* 3. 하단 액션 버튼 (공유하기 & 리셋) */}
-              <div className="shrink-0 relative flex flex-col items-center gap-3">
-                <button
-                  type="button"
-                  onClick={() => setShowShareMenu(!showShareMenu)}
-                  disabled={!outputText}
-                  className="flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[var(--vibrant-violet)] to-[var(--electric-blue)] px-6 py-4 font-semibold text-white shadow-lg transition-all duration-300 hover:scale-[1.02] hover:shadow-purple-500/40 disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  <Share2 className="h-5 w-5" />
-                  공유하기
-                </button>
+              {/* 3. 공유/리셋 — 결과창과 mt-4 간격, 버튼은 변환하기와 동일 클래스 */}
+              <div className="mt-4 flex shrink-0 flex-col gap-3">
+                <div className="relative w-full">
+                  <button
+                    type="button"
+                    onClick={() => setShowShareMenu(!showShareMenu)}
+                    disabled={!outputText}
+                    className={MOBILE_PRIMARY_CTA_CLASS}
+                  >
+                    <Share2 className="h-5 w-5 shrink-0" />
+                    공유하기
+                  </button>
 
-                {/* 공유 메뉴 팝오버 */}
+                {/* 공유 메뉴: 버튼 아래로 열어 결과 박스를 덮지 않음 */}
                 <AnimatePresence>
                   {showShareMenu && outputText && (
                     <>
@@ -575,11 +583,11 @@ export function DemoSection() {
                       <motion.div
                         role="menu"
                         data-capture-exclude="true"
-                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                        initial={{ opacity: 0, y: -6, scale: 0.98 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                        exit={{ opacity: 0, y: -6, scale: 0.98 }}
                         transition={{ duration: 0.15 }}
-                        className="absolute bottom-full left-1/2 z-50 mb-2 w-64 -translate-x-1/2 overflow-hidden rounded-2xl border border-border bg-card shadow-2xl"
+                        className="absolute left-0 right-0 top-full z-50 mt-2 w-full overflow-hidden rounded-2xl border border-border bg-card shadow-2xl"
                       >
                         {shareOptions.map((option, index) => (
                           <button
@@ -604,8 +612,8 @@ export function DemoSection() {
                     </>
                   )}
                 </AnimatePresence>
+                </div>
 
-                {/* 다시 변환하기 버튼 */}
                 {isConverted && (
                   <button
                     type="button"
@@ -617,7 +625,7 @@ export function DemoSection() {
                       setActivePresetId(null);
                       setShowShareMenu(false);
                     }}
-                    className="text-sm font-semibold text-[var(--vibrant-violet)] transition-colors hover:opacity-80 pb-1"
+                    className="text-center text-sm font-semibold text-[var(--vibrant-violet)] transition-colors hover:opacity-80"
                   >
                     다시 변환하기
                   </button>
@@ -625,11 +633,11 @@ export function DemoSection() {
               </div>
             </div>
           </div>
+        </motion.div>
 
         {shareStatus && (
           <p className="mt-4 text-center text-sm text-gray-600">{shareStatus}</p>
         )}
-
       </div>
     </section>
   );
