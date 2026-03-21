@@ -472,7 +472,7 @@ export function DemoSection() {
                   setInputText(e.target.value);
                   setActivePresetId(null);
                 }}
-                placeholder="여기에 텍스트를 입력하거나 붙여넣기 ..."
+                placeholder="여기에 텍스트를 입력하거나 붙여넣으세요. 무엇을 입력할지 모르겠다면 예시를 클릭해보세요."
                 className="min-h-0 w-full flex-1 resize-none rounded-2xl border-2 border-border bg-card px-4 py-3 text-foreground placeholder:text-muted-foreground shadow-sm transition-all focus:border-[var(--vibrant-violet)] focus:outline-none focus:ring-4 focus:ring-purple-100"
               />
 
