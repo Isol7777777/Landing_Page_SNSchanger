@@ -2,7 +2,6 @@ import { motion, AnimatePresence } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import {
   Instagram,
-  ArrowDown,
   Share2,
   Link2,
   Send,

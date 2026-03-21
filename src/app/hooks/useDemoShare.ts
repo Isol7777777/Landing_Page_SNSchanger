@@ -49,14 +49,6 @@ export function useDemoShare({
     return /Android|iPhone|iPad|iPod/i.test(ua);
   };
 
-  const getInstagramStoreUrl = () => {
-    const ua = navigator.userAgent || "";
-    const isIOS = /iPhone|iPad|iPod/i.test(ua);
-    return isIOS
-      ? "https://apps.apple.com/app/instagram/id389801252"
-      : "https://play.google.com/store/apps/details?id=com.instagram.android";
-  };
-
   const getCaptureBackgroundColor = () => {
     const bg = getComputedStyle(document.documentElement)
       .getPropertyValue("--background")
@@ -320,85 +312,11 @@ export function useDemoShare({
     }
   };
 
-  const fallbackSaveAndCopy = async (dataUrl: string, shareUrl: string) => {
-    downloadImage(dataUrl, "taptap-story.png");
-    try {
-      await navigator.clipboard.writeText(shareUrl);
-      setTimedShareStatus("이미지를 저장하고 링크를 복사했어요. 모바일에서 인스타 앱으로 업로드해 주세요.");
-    } catch {
-      setTimedShareStatus("이미지를 저장했어요. 링크 복사는 브라우저 권한을 확인해 주세요.");
-    }
-  };
-
-  const handleShareToKakaoTalk = async () => {
-    try {
-      const shareUrl = await getOrCreateShareUrl();
-      const dataUrl = await captureResultGridDataUrl();
-      downloadImage(dataUrl, "taptap-result.png");
-      await navigator.clipboard.writeText(shareUrl);
-      setTimedShareStatus(
-        "이미지를 저장하고 링크를 복사했어요. 카카오톡 앱으로 업로드해 주세요."
-      );
-    } catch {
-      setTimedShareStatus("카카오톡 공유 준비에 실패했어요.");
-    }
-  };
-
-  const handleShareToInstagramStory = async () => {
-    try {
-      const shareUrl = await getOrCreateShareUrl();
-      const dataUrl = await captureResultGridDataUrl();
-
-      if (!isMobileDevice()) {
-        await fallbackSaveAndCopy(dataUrl, shareUrl);
-        return;
-      }
-
-      const base64 = dataUrl.split(",")[1] ?? "";
-      if (!base64) throw new Error("인스타 공유용 이미지 데이터가 비어있어요.");
-
-      const sourceApp =
-        (import.meta.env.VITE_INSTAGRAM_SOURCE_APPLICATION as string | undefined)?.trim() ||
-        "TapTap";
-      const schemeUrl = `instagram-stories://share?source_application=${encodeURIComponent(
-        sourceApp
-      )}&backgroundImage=${encodeURIComponent(base64)}`;
-
-      let didHide = false;
-      const onVisibility = () => {
-        if (document.visibilityState === "hidden") didHide = true;
-      };
-      document.addEventListener("visibilitychange", onVisibility);
-
-      window.location.href = schemeUrl;
-
-      window.setTimeout(async () => {
-        document.removeEventListener("visibilitychange", onVisibility);
-        if (!didHide) {
-          window.location.href = getInstagramStoreUrl();
-          await fallbackSaveAndCopy(dataUrl, shareUrl);
-        } else {
-          setTimedShareStatus("인스타그램 스토리를 여는 중입니다...");
-        }
-      }, 1600);
-    } catch {
-      try {
-        const shareUrl = await getOrCreateShareUrl();
-        const dataUrl = await captureResultGridDataUrl();
-        await fallbackSaveAndCopy(dataUrl, shareUrl);
-      } catch {
-        setTimedShareStatus("인스타그램 공유 준비에 실패했어요.");
-      }
-    }
-  };
-
   return {
     copied,
     shareStatus,
     handleCopyLink,
     handleSystemShare,
-    handleShareToKakaoTalk,
-    handleShareToInstagramStory,
     handleShareToThreads,
     handleShareToX,
   };
