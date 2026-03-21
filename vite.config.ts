@@ -3,14 +3,16 @@ import { defineConfig } from 'vite'
 import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
 import { visualizer } from 'rollup-plugin-visualizer'
+import { seoDistFilesPlugin } from './vite-plugin-seo-files'
 
-// sitemap.xml, rss.xml, robots.txt → public/ 에 두면 빌드 시 dist 루트로 복사됨 (Vite 기본 동작)
+// public/ 의 sitemap·rss·robots 는 dev용; 프로덕션 빌드 시 seoDistFilesPlugin 이 SITE_URL/VERCEL_URL 기준으로 dist 루트에 덮어씀
 
 export default defineConfig({
   envPrefix: ['VITE_', 'NEXT_PUBLIC_'],
   plugins: [
     react(),
     tailwindcss(),
+    seoDistFilesPlugin(),
     process.env.ANALYZE === 'true' &&
       visualizer({
         filename: 'dist/stats.html',

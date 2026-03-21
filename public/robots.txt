@@ -1,4 +1,23 @@
 User-agent: *
 Allow: /
 
+# 크롤링 힌트(순응 봇용). 실제 파일 노출 차단은 호스팅·서버 설정으로 보장하세요.
+Disallow: /.env
+Disallow: /.env.local
+Disallow: /.env.development
+Disallow: /.env.development.local
+Disallow: /.env.production
+Disallow: /.env.production.local
+Disallow: /.git
+Disallow: /.git/
+Disallow: /package.json
+Disallow: /package-lock.json
+Disallow: /pnpm-lock.yaml
+Disallow: /yarn.lock
+Disallow: /bun.lock
+Disallow: /tsconfig.json
+Disallow: /vite.config.ts
+Disallow: /src/
+Disallow: /node_modules/
+
 Sitemap: https://tap-tap828288.vercel.app/sitemap.xml
