@@ -1,5 +1,10 @@
 import { getSupabaseClient } from "./supabaseClient";
 
+/** 데모 섹션 마운트 시 호출하면 첫 변환 시 동적 import·클라이언트 생성 비용을 줄입니다. */
+export function warmupPersonaTranslateClient(): void {
+  void getSupabaseClient();
+}
+
 export type PersonaTranslation = {
   instagram: string;
   naver: string;

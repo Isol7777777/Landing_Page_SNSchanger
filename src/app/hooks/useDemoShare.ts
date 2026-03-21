@@ -18,6 +18,9 @@ type UseDemoShareParams = {
 
 const SHARE_CAPTION = "내 아무말을 SNS 감성따라 세탁해드립니다. 본격 SNS 번역기 가동 중!";
 
+/** DemoSection 데모 카드 — 스크린샷 공유 시 캡처 대상 (hidden 복제 DOM 제거 후 실제 UI 사용) */
+const CAPTURE_TARGET_SELECTOR = "[data-capture-target=\"demo-grid\"]";
+
 export function useDemoShare({
   sectionRef,
   inputText,
@@ -135,8 +138,10 @@ export function useDemoShare({
   }, [sectionRef, setActiveTab, setInputText, setIsConverted, setOutputText]);
 
   const captureResultGridDataUrl = async (): Promise<string> => {
-    const target = document.getElementById("capture-area");
-    if (!target) throw new Error("캡처할 영역(#capture-area)을 찾지 못했어요.");
+    const target = document.querySelector(CAPTURE_TARGET_SELECTOR) as HTMLElement | null;
+    if (!target) {
+      throw new Error("캡처할 영역(데모 카드)을 찾지 못했어요. 페이지를 새로고침 후 다시 시도해 주세요.");
+    }
 
     const CAPTURE_WIDTH = 450;
     const measureHost = document.createElement("div");
@@ -176,7 +181,7 @@ export function useDemoShare({
         },
       },
       onclone: (clonedDoc: Document) => {
-        const clonedArea = clonedDoc.querySelector("#capture-area") as HTMLElement | null;
+        const clonedArea = clonedDoc.querySelector(CAPTURE_TARGET_SELECTOR) as HTMLElement | null;
         if (!clonedArea) return;
 
         clonedDoc
