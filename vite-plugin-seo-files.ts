@@ -43,6 +43,11 @@ function formatRssDate(d: Date): string {
   return d.toUTCString();
 }
 
+/** RSS 텍스트 필드: 엔티티 이슈·한글 호환 (네이버 등 엄격 검증기 대응) */
+function cdata(s: string): string {
+  return `<![CDATA[${s.replace(/]]>/g, "]]]]><![CDATA[>")}]]>`;
+}
+
 /**
  * public/에서 복사된 뒤 dist 루트의 sitemap·rss·robots를
  * 빌드 시점의 정식 도메인(SITE_URL / VERCEL_URL)으로 덮어씁니다.
@@ -62,7 +67,6 @@ export function seoDistFilesPlugin(): Plugin {
       const base = getSiteUrl();
       const canonicalHome = `${base}/`;
       const sitemapUrl = `${base}/sitemap.xml`;
-      const rssUrl = `${base}/rss.xml`;
       const now = new Date();
       const lastmod = formatSitemapLastmod(now);
       const rssDate = formatRssDate(now);
@@ -79,22 +83,26 @@ export function seoDistFilesPlugin(): Plugin {
         `  </url>\n` +
         `</urlset>\n`;
 
+      // 순수 RSS 2.0 (atom:link·Atom 네임스페이스 제거) — 네이버 서치어드바이저 RSS 등록 422 완화
+      // channel 링크·item 링크·guid·사이트맵 loc 호스트·스킴 일치 유지
       const rss =
         `<?xml version="1.0" encoding="UTF-8"?>\n` +
-        `<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">\n` +
+        `<rss version="2.0">\n` +
         `  <channel>\n` +
-        `    <title>${escapeXml("TapTap(탭탭)")}</title>\n` +
+        `    <title>${cdata("TapTap(탭탭)")}</title>\n` +
         `    <link>${escapeXml(canonicalHome)}</link>\n` +
-        `    <description>${escapeXml("일상의 생각을 SNS에 맞게 변환하는 TapTap(탭탭) 랜딩페이지")}</description>\n` +
-        `    <language>ko-KR</language>\n` +
+        `    <description>${cdata("일상의 생각을 SNS에 맞게 변환하는 TapTap(탭탭) 랜딩페이지")}</description>\n` +
+        `    <language>ko</language>\n` +
         `    <lastBuildDate>${rssDate}</lastBuildDate>\n` +
-        `    <atom:link href="${escapeXml(rssUrl)}" rel="self" type="application/rss+xml"/>\n` +
+        `    <docs>https://www.rssboard.org/rss-specification</docs>\n` +
+        `    <generator>TapTap</generator>\n` +
+        `    <ttl>1440</ttl>\n` +
         `    <item>\n` +
-        `      <title>${escapeXml("TapTap(탭탭) — 메인")}</title>\n` +
+        `      <title>${cdata("TapTap(탭탭) - 메인")}</title>\n` +
         `      <link>${escapeXml(canonicalHome)}</link>\n` +
         `      <guid isPermaLink="true">${escapeXml(canonicalHome)}</guid>\n` +
         `      <pubDate>${rssDate}</pubDate>\n` +
-        `      <description>${escapeXml("사전예약 및 서비스 소개")}</description>\n` +
+        `      <description>${cdata("사전예약 및 서비스 소개")}</description>\n` +
         `    </item>\n` +
         `  </channel>\n` +
         `</rss>\n`;

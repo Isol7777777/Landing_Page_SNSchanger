@@ -1,18 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<rss version="2.0">
   <channel>
-    <title>TapTap(탭탭)</title>
+    <title><![CDATA[TapTap(탭탭)]]></title>
     <link>https://tap-tap828288.vercel.app/</link>
-    <description>일상의 생각을 SNS에 맞게 변환하는 TapTap(탭탭) 랜딩페이지</description>
-    <language>ko-KR</language>
+    <description><![CDATA[일상의 생각을 SNS에 맞게 변환하는 TapTap(탭탭) 랜딩페이지]]></description>
+    <language>ko</language>
     <lastBuildDate>Tue, 18 Mar 2026 12:00:00 GMT</lastBuildDate>
-    <atom:link href="https://tap-tap828288.vercel.app/rss.xml" rel="self" type="application/rss+xml"/>
+    <docs>https://www.rssboard.org/rss-specification</docs>
+    <generator>TapTap</generator>
+    <ttl>1440</ttl>
     <item>
-      <title>TapTap(탭탭) — 메인</title>
+      <title><![CDATA[TapTap(탭탭) - 메인]]></title>
       <link>https://tap-tap828288.vercel.app/</link>
       <guid isPermaLink="true">https://tap-tap828288.vercel.app/</guid>
       <pubDate>Tue, 18 Mar 2026 12:00:00 GMT</pubDate>
-      <description>사전예약 및 서비스 소개</description>
+      <description><![CDATA[사전예약 및 서비스 소개]]></description>
     </item>
   </channel>
 </rss>

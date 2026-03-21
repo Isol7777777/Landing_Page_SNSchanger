@@ -1,4 +1,10 @@
 {
+  "rewrites": [
+    {
+      "source": "/((?!assets/)(?!sitemap\\.xml$)(?!rss\\.xml$)(?!robots\\.txt$)(?!favicon\\.svg$).*)",
+      "destination": "/index.html"
+    }
+  ],
   "headers": [
     {
       "source": "/sitemap.xml",
