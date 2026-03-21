@@ -223,8 +223,8 @@ export function DemoSection() {
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45 }}
           className="mb-12 text-center"
         >
           <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-border/80 bg-card px-4 py-2 dark:bg-primary/14">
@@ -248,10 +248,9 @@ export function DemoSection() {
         {/* Translator Interface */}
         <motion.div
           data-capture-target="demo-grid"
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.2 }}
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.12, duration: 0.45 }}
           className="rounded-3xl border border-border/80 bg-card p-0 shadow-2xl sm:p-8 dark:bg-primary/14"
         >
           {/* Desktop (sm 이상): 기존 좌/우 그리드 유지 */}
@@ -446,28 +445,12 @@ export function DemoSection() {
             </div>
           </div>
 
-          {/* Mobile Full-screen Split (sm 미만) */}
-          <div className="sm:hidden flex h-[calc(100dvh-120px)] min-h-[calc(100dvh-120px)] flex-col gap-6 p-4">
-            
+          {/* Mobile Full-screen Split (sm 미만) — 예시 pill 없음, 결과 영역 비중 ↑ */}
+          <div className="sm:hidden flex h-[calc(100dvh-120px)] min-h-[calc(100dvh-120px)] flex-col gap-4 p-4">
             {/* ==========================================
-                상단: 입력 영역 (Top Half)
+                상단: 입력 영역
             ========================================== */}
-            <div className="flex min-h-0 flex-1 flex-col gap-3">
-              {/* 1. 상단 컨트롤 (예시 필) */}
-              <div className="flex shrink-0 gap-2 overflow-x-auto pb-1 scrollbar-hide">
-                {EXAMPLE_PRESETS.map((pill) => (
-                  <button
-                    key={pill.id}
-                    type="button"
-                    onClick={() => handleExampleClick(pill.id)}
-                    className="shrink-0 rounded-full border border-border/80 bg-card px-3 py-1.5 text-sm text-foreground shadow-sm transition-all duration-200 hover:border-purple-300 hover:shadow-md"
-                  >
-                    {pill.label}
-                  </button>
-                ))}
-              </div>
-
-              {/* 2. 메인 박스 (입력창) */}
+            <div className="flex min-h-0 min-w-0 basis-0 flex-[8] flex-col gap-3">
               <textarea
                 value={inputText}
                 onChange={(e) => {
@@ -478,7 +461,6 @@ export function DemoSection() {
                 className="min-h-0 w-full flex-1 resize-none rounded-2xl border-2 border-border bg-card px-4 py-3 text-foreground placeholder:text-muted-foreground shadow-sm transition-all focus:border-[var(--vibrant-violet)] focus:outline-none focus:ring-4 focus:ring-purple-100"
               />
 
-              {/* 3. 하단 액션 버튼 (변환하기) */}
               <div className="shrink-0">
                 <button
                   type="button"
@@ -508,9 +490,9 @@ export function DemoSection() {
             </div>
 
             {/* ==========================================
-                하단: 결과 영역 (Bottom Half)
+                하단: 결과 영역 (상단보다 넓게)
             ========================================== */}
-            <div className="flex min-h-0 flex-1 flex-col">
+            <div className="flex min-h-0 min-w-0 basis-0 flex-[12] flex-col">
               {/* 1. 상단 컨트롤 (플랫폼 탭) */}
               <div className="mb-3 flex shrink-0 gap-2 rounded-2xl border border-border/80 bg-card p-1">
                 <button
@@ -613,27 +595,28 @@ export function DemoSection() {
                   )}
                 </AnimatePresence>
                 </div>
-
-                {isConverted && (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setInputText("");
-                      setOutputText("");
-                      setIsConverted(false);
-                      setAiResult(null);
-                      setActivePresetId(null);
-                      setShowShareMenu(false);
-                    }}
-                    className="text-center text-sm font-semibold text-[var(--vibrant-violet)] transition-colors hover:opacity-80"
-                  >
-                    다시 변환하기
-                  </button>
-                )}
               </div>
             </div>
           </div>
         </motion.div>
+
+        {/* 모바일: 카드 테두리 밖 — 다시 변환하기 (결과 칸 여백 확보) */}
+        {isConverted && (
+          <button
+            type="button"
+            onClick={() => {
+              setInputText("");
+              setOutputText("");
+              setIsConverted(false);
+              setAiResult(null);
+              setActivePresetId(null);
+              setShowShareMenu(false);
+            }}
+            className="mt-3 w-full text-center text-sm font-semibold text-[var(--vibrant-violet)] transition-colors hover:opacity-80 sm:hidden"
+          >
+            다시 변환하기
+          </button>
+        )}
 
         {shareStatus && (
           <p className="mt-4 text-center text-sm text-gray-600">{shareStatus}</p>
