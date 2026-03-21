@@ -1,7 +1,11 @@
+# Google Search Console: 사이트맵 가져오기 차단 방지 — sitemap.xml·rss.xml 명시 허용
+# https://support.google.com/webmasters/answer/7451001#error_list
 User-agent: *
+Allow: /sitemap.xml
+Allow: /rss.xml
 Allow: /
 
-# 크롤링 힌트(순응 봇용). 실제 파일 노출 차단은 호스팅·서버 설정으로 보장하세요.
+# 크롤링 힌트(순응 봇용). 실제 노출 차단은 호스팅·서버 설정으로 보장하세요.
 Disallow: /.env
 Disallow: /.env.local
 Disallow: /.env.development
