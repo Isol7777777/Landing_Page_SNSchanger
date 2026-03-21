@@ -126,7 +126,10 @@ export function DemoSection() {
       setShowShareMenu(false);
     } catch (error) {
       console.error("Persona translate error", error);
-      alert("변환 중 오류가 발생했습니다. 서버 함수/환경변수 설정을 확인해주세요.");
+      const detail = error instanceof Error ? error.message : String(error);
+      alert(
+        `변환 중 오류가 발생했습니다.\n\n${detail}\n\n• .env에 VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY(또는 VITE_SUPABASE_PUBLISHABLE_KEY)가 있는지 확인\n• 저장 후 dev 서버(npm run dev)를 다시 시작\n• Edge Function persona-translate 배포 및 OPENAI_API_KEY 시크릿 설정`
+      );
     } finally {
       setIsTranslating(false);
     }
