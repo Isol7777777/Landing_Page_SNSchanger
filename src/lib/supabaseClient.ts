@@ -14,12 +14,12 @@ export async function getSupabaseClient(): Promise<SupabaseClient> {
 
   if (!supabaseUrl) {
     throw new Error(
-      "VITE_SUPABASE_URL이 없습니다. 프로젝트 루트 .env에 Supabase 프로젝트 URL을 넣고 npm run dev를 다시 실행하세요."
+      "VITE_SUPABASE_URL이 없습니다. 로컬: 프로젝트 루트 .env에 URL을 넣고 npm run dev 재시작. Vercel 등 배포: Dashboard → Settings → Environment Variables에 VITE_SUPABASE_URL 추가 후 Redeploy."
     );
   }
   if (!supabaseKey) {
     throw new Error(
-      "VITE_SUPABASE_ANON_KEY 또는 VITE_SUPABASE_PUBLISHABLE_KEY가 없습니다. .env에 anon public 키를 넣고 dev 서버를 다시 시작하세요."
+      "VITE_SUPABASE_ANON_KEY 또는 VITE_SUPABASE_PUBLISHABLE_KEY가 없습니다. 로컬: .env에 anon 키 후 dev 재시작. 배포: Vercel 환경 변수에 동일 이름으로 추가 후 Redeploy."
     );
   }
 

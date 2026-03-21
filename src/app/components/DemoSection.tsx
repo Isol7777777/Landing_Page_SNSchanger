@@ -128,7 +128,7 @@ export function DemoSection() {
       console.error("Persona translate error", error);
       const detail = error instanceof Error ? error.message : String(error);
       alert(
-        `변환 중 오류가 발생했습니다.\n\n${detail}\n\n• .env에 VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY(또는 VITE_SUPABASE_PUBLISHABLE_KEY)가 있는지 확인\n• 저장 후 dev 서버(npm run dev)를 다시 시작\n• Edge Function persona-translate 배포 및 OPENAI_API_KEY 시크릿 설정`
+        `변환 중 오류가 발생했습니다.\n\n${detail}\n\n• 로컬: .env에 위 변수 설정 후 npm run dev 재시작\n• Vercel: Project → Settings → Environment Variables에 VITE_SUPABASE_URL·VITE_SUPABASE_ANON_KEY(또는 PUBLISHABLE) 추가 → Redeploy (빌드 시에만 주입됨)\n• Supabase: Edge Function persona-translate 배포, OPENAI_API_KEY 시크릿 설정`
       );
     } finally {
       setIsTranslating(false);
