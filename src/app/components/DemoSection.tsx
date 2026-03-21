@@ -445,12 +445,27 @@ export function DemoSection() {
             </div>
           </div>
 
-          {/* Mobile Full-screen Split (sm 미만) — 예시 pill 없음, 결과 영역 비중 ↑ */}
+          {/* Mobile Full-screen Split (sm 미만) — 변환 전에만 예시 pill 표시, 변환 후 숨김 */}
           <div className="sm:hidden flex h-[calc(100dvh-120px)] min-h-[calc(100dvh-120px)] flex-col gap-4 p-4">
             {/* ==========================================
                 상단: 입력 영역
             ========================================== */}
             <div className="flex min-h-0 min-w-0 basis-0 flex-[8] flex-col gap-3">
+              {!isConverted && (
+                <div className="flex shrink-0 gap-2 overflow-x-auto pb-1 scrollbar-hide">
+                  {EXAMPLE_PRESETS.map((pill) => (
+                    <button
+                      key={pill.id}
+                      type="button"
+                      onClick={() => handleExampleClick(pill.id)}
+                      className="shrink-0 rounded-full border border-border/80 bg-card px-3 py-1.5 text-sm text-foreground shadow-sm transition-all duration-200 hover:border-purple-300 hover:shadow-md"
+                    >
+                      {pill.label}
+                    </button>
+                  ))}
+                </div>
+              )}
+
               <textarea
                 value={inputText}
                 onChange={(e) => {
