@@ -1,8 +1,8 @@
 import { getSupabaseClient } from "./supabaseClient";
 
 export type PersonaTranslation = {
-  twitter: string;
   instagram: string;
+  naver: string;
 };
 
 export async function translateWithPersonaApi(input: string): Promise<PersonaTranslation> {
@@ -15,11 +15,12 @@ export async function translateWithPersonaApi(input: string): Promise<PersonaTra
     throw new Error(error.message);
   }
 
-  const twitter = (data?.twitter ?? "").trim();
-  const instagram = (data?.instagram ?? "").trim();
-  if (!twitter || !instagram) {
+  const raw = data as { instagram?: string; naver?: string; twitter?: string } | null;
+  const naver = (raw?.naver ?? raw?.twitter ?? "").trim();
+  const instagram = (raw?.instagram ?? "").trim();
+  if (!naver || !instagram) {
     throw new Error("번역 결과 형식이 올바르지 않습니다.");
   }
 
-  return { twitter, instagram };
+  return { instagram, naver };
 }

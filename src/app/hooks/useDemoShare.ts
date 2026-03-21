@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import type { SharedLinkContent } from "../../lib/shareService";
 
-type ActiveTab = "instagram" | "twitter";
+type ActiveTab = "instagram" | "naver";
 
 type UseDemoShareParams = {
   sectionRef: React.RefObject<HTMLElement | null>;
@@ -13,7 +13,7 @@ type UseDemoShareParams = {
   setOutputText: React.Dispatch<React.SetStateAction<string>>;
   setIsConverted: React.Dispatch<React.SetStateAction<boolean>>;
   buildInstagramMock: (input: string) => string;
-  buildTwitterMock: (input: string) => string;
+  buildNaverMock: (input: string) => string;
 };
 
 const SHARE_CAPTION = "내 아무말을 SNS 감성따라 세탁해드립니다. 본격 SNS 번역기 가동 중!";
@@ -28,7 +28,7 @@ export function useDemoShare({
   setOutputText,
   setIsConverted,
   buildInstagramMock,
-  buildTwitterMock,
+  buildNaverMock,
 }: UseDemoShareParams) {
   const [copied, setCopied] = useState(false);
   const [shareStatus, setShareStatus] = useState<string | null>(null);
@@ -67,10 +67,10 @@ export function useDemoShare({
       activeTab === "instagram" && outputText.trim()
         ? outputText
         : buildInstagramMock(base || "일상을 공유해요");
-    const twitter =
-      activeTab === "twitter" && outputText.trim()
+    const naver =
+      activeTab === "naver" && outputText.trim()
         ? outputText
-        : buildTwitterMock(base || "오늘의 한 줄");
+        : buildNaverMock(base || "오늘의 한 줄");
     const keywords = Array.from(
       new Set(
         base
@@ -82,7 +82,7 @@ export function useDemoShare({
 
     return {
       instagram,
-      twitter,
+      naver,
       keywords: keywords.length >= 3 ? keywords : ["일상", "감성", "기록"],
     };
   };

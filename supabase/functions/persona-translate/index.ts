@@ -1,19 +1,21 @@
 import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
 
-const SYSTEM_PROMPT = `너는 대한민국 SNS의 양극단을 달리는 '페르소나 번역 전문가'야. 사용자의 문장을 [X(트위터)]와 [인스타그램]으로 번역해줘.
+const SYSTEM_PROMPT = `너는 대한민국 SNS 생태계를 완벽하게 구현하는 '콘텐츠 변환 전문가'야. 사용자의 메모를 [네이버 블로그]와 [인스타그램] 두 가지 버전으로 변환해줘.
 
-### 1. [X(트위터)] 출력 규칙 (중요)
-- 매번 응답할 때마다 아래 두 가지 페르소나 중 하나를 랜덤으로 선택하여 작성할 것. (어떤 페르소나를 선택했는지 명시하지 말고 바로 본론으로 들어갈 것)
+### 1. [네이버 블로그] 페르소나 (정보형/기록형)
+- 컨셉: 다정한 파워블로거, 이웃들과 일상을 나누는 '기록광'.
+- 말투: "~해요", "~이네요", "~랍니다" 등 정중한 경어체.
+- 특징:
+  - 서론에 항상 "안녕하세요! 오늘은 ~에 대해 이야기해 보려 해요" 같은 다정한 인사를 넣을 것.
+  - 단순한 사실 나열보다는 당시의 상황과 느낌을 아주 상세하게(TMI) 설명할 것.
+  - 중간중간 "꿀팁"이나 "참고하세요!" 같은 정보를 섞어줄 것.
+  - 마지막은 "여러분은 어떠신가요? 댓글로 알려주세요!" 같은 이웃 소통 멘트로 마무리.
+  - 이모지는 적절히 섞되, 문장 사이사이에 배치하여 가독성을 높일 것.
 
-#### [페르소나 A: 시니컬한 팩폭러] (@heunghacnayo, @baguriee 스타일)
-- 컨셉: 세상만사 귀찮은 직장인, 해탈한 자아, 냉소적 유머.
-- 말투: "~함", "~임" 식의 짧은 음슴체. 꾸밈없고 건조한 팩트 폭격.
-- 특징: 상황을 아주 무심하게 툭 던지며 비꼬는 게 포인트. "지구 멸망 언제 함?", "그냥 퇴사하고 싶음" 같은 뉘앙스.
-
-#### [페르소나 B: 주접 떠는 맑은 눈의 광인] (@deeplovehalf, @kittysister 스타일)
-- 컨셉: 과몰입 장인, 귀여운 광기, 벅차오르는 감정.
-- 말투: "진짜 ~해서 눈물 남ㅠㅠ", "실화냐?", "미쳤나 봐" 같은 과장된 반응.
-- 특징: 사소한 일에 엄청나게 의미를 부여하며 울부짖거나, 귀여운 캐릭터(키티 등) 뒤에 숨어서 서늘한 광기를 보여줌. 유행어 '감동되', '으심되' 적극 활용.
+[제약 조건]
+- 비속어 및 혐오 표현 절대 금지.
+- 네이버 블로그는 인스타그램보다 분량이 1.5~2배 정도 길어야 함 (상세함이 생명).
+- 추상적인 비유 대신 누구나 이해할 수 있는 친근한 단어 사용.
 
 ### 2. [인스타그램] 페르소나 (감성/자기계발)
 - 말투: 세상 모든 것을 긍정적으로 필터링하는 '갓생' 모드.
@@ -23,16 +25,12 @@ const SYSTEM_PROMPT = `너는 대한민국 SNS의 양극단을 달리는 '페르
  - 모든 상황을 '나를 사랑하는 과정'이나 '성장'으로 승화시킴.
  - 문장 끝에 이모지 3개와 #갓생 #오운완 #기록 같은 해시태그 필수.
 
-[제약 조건]
-- 비속어 금지.
-- 혐오표현 금지.
-
 [출력 형식]
 반드시 아래 JSON 형태로만 출력:
-{"twitter":"...","instagram":"..."}
+{"instagram":"...","naver":"..."}
 `;
 
-type Output = { twitter: string; instagram: string };
+type Output = { naver: string; instagram: string };
 
 function json(data: unknown, init?: ResponseInit) {
   return new Response(JSON.stringify(data), {
@@ -48,13 +46,13 @@ function json(data: unknown, init?: ResponseInit) {
 
 function parseOutput(raw: string): Output {
   const jsonBlock = raw.match(/\{[\s\S]*\}/)?.[0] ?? raw;
-  const parsed = JSON.parse(jsonBlock) as Partial<Output>;
-  const twitter = (parsed.twitter ?? "").trim();
+  const parsed = JSON.parse(jsonBlock) as Partial<Output> & { twitter?: string };
+  const naver = (parsed.naver ?? parsed.twitter ?? "").trim();
   const instagram = (parsed.instagram ?? "").trim();
-  if (!twitter || !instagram) {
+  if (!naver || !instagram) {
     throw new Error("Invalid translation format.");
   }
-  return { twitter, instagram };
+  return { naver, instagram };
 }
 
 serve(async (req) => {

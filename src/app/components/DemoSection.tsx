@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { useDemoShare } from "../hooks/useDemoShare";
 import { translateWithPersonaApi, type PersonaTranslation } from "../../lib/personaTranslateService";
+import svgPaths from "../../imports/svg-eir802r15e";
 
 // 💡 AI 토큰 절감 프리셋
 export const EXAMPLE_PRESETS = [
@@ -22,7 +23,8 @@ export const EXAMPLE_PRESETS = [
     results: {
       instagram:
         "핑크빛으로 물든 오늘의 퇴근길 🩷🌅\n\n바쁜 하루 끝에 마주한 선물 같은 풍경이었어요. 잠시 멈춰 서서 바라본 하늘은 마치 한 폭의 수채화 같았답니다. 이런 작은 행복들이 모여 내일을 살아갈 힘이 되는 것 같아요. ✨\n\n#오늘의노을 #퇴근길감성 #분홍하늘 #일상기록 #sunset #skyview",
-      twitter: "얘들아 제발 지금 당장 고개 들어서 하늘 좀 봐... 나 길 한복판에서 노을 보다가 고흐될뻔;;",
+      naver:
+        "퇴근길에 우연히 하늘을 올려다봤는데, 노을이 정말 예쁘더라고요.\n\n잠깐 멈춰서 사진도 찍고, 그냥 그 순간만 느껴봤어요. 요즘은 바쁘게 살다 보면 이런 풍경을 놓치기 쉬운데, 오늘은 작은 선물 같은 시간이었어요.\n\n비슷한 날 있으면 한번 천천히 걸어보세요 🙂",
     },
   },
   {
@@ -33,8 +35,8 @@ export const EXAMPLE_PRESETS = [
     results: {
       instagram:
         "New Chapter, New Project! 🚀✨\n\n드디어 새로운 도전을 시작하게 되었습니다. 든든한 팀원들과 함께 열정 가득하게 준비하고 있어요. 우리가 그려나갈 결과물들이 벌써부터 기대되네요! 응원해 주세요. 💪🔥\n\n#새로운시작 #프로젝트 #팀워크 #열정 #워크라이프 #갓생살기 #workmode",
-      twitter:
-        "새 프로젝트 시작... 팀원들 눈광 보니까 이거 대박 아니면 진짜 은퇴각임ㅋㅋㅋㅋㅋ 자 가보자고!!!! (사실 이미 도망가고 싶음)",
+      naver:
+        "새 프로젝트를 시작하게 됐어요. 팀원들이랑 같이 준비하면서 설레기도 하고, 조금 긴장되기도 했네요.\n\n아직 결과는 모르겠지만, 시작했다는 것만으로도 의미 있는 하루인 것 같아요. 앞으로 차근차근 기록해 보려고요.\n\n비슷한 시기 지나가는 분들도 응원해요!",
     },
   },
   {
@@ -45,8 +47,8 @@ export const EXAMPLE_PRESETS = [
     results: {
       instagram:
         "Morning Routine: Jogging 🏃‍♀️🌱\n\n상쾌한 아침 공기 마시며 기분 좋게 하루 시작! 몸은 조금 무겁지만 마음만큼은 가벼워지는 시간이에요. 오늘 하루도 건강하고 활기차게 보내봐요! ☀️✨\n\n#오운완 #아침운동 #조깅 #건강한습관 #갓생기록 #운동하는여자 #morningrun",
-      twitter:
-        "갓생 살겠다고 새벽 6시에 조깅 나간 과거의 나 멱살 잡고 싶다... 지금 다리 후들거려서 계단 내려가는데 자동 탭댄스 추는 중임ㅋㅋㅋㅋㅋ 운동은 몸에 해롭다... 아냐 좋아... 아냐 해로워...",
+      naver:
+        "오늘은 아침에 가볍게 조깅을 다녀왔어요. 공기가 차가운데도 달리고 나니까 머리가 맑아지는 느낌이었어요.\n\n완벽한 페이스는 아니었지만, 일어난 것만으로 스스로 칭찬해 주기로 했습니다. 작은 습관이 쌓이면 나중에 큰 변화가 되겠죠.\n\n오늘도 한 걸음씩!",
     },
   },
   {
@@ -57,8 +59,8 @@ export const EXAMPLE_PRESETS = [
     results: {
       instagram:
         "Weekends & Brunch ☕️🥐\n\n햇살 가득한 새로 생긴 브런치 카페 발견! 고소한 라떼 한 잔에 예쁜 공간이 주는 힐링까지, 완벽한 주말 아침이었어요. 여기 단골 예약입니다. ✨\n\n#브런치카페 #카페투어 #주말기록 #라떼맛집 #감성카페 #힐링타임 #cafevibe",
-      twitter:
-        "여기 브런치 카페 라떼 한 입 먹자마자 전두엽 기립박수 침;; 분위기 미쳤고 맛은 더 미쳤음. 역시 인생은 탄수화물과 카페인의 합작이다. ",
+      naver:
+        "새로 생긴 브런치 카페에 다녀왔어요. 라떼 맛이 고소하고 부드러워서 기분이 좋아졌네요.\n\n인테리어도 따뜻해서 사진 찍기 좋았고, 창가 자리에 앉아 여유 있게 쉬었어요. 주말 아침에 가기 딱 좋은 곳이에요.\n\n다음에 또 가고 싶은 카페로 기록해 둡니다.",
     },
   },
 ];
@@ -83,17 +85,17 @@ function buildInstagramMock(input: string): string {
   }`;
 }
 
-function buildTwitterMock(input: string): string {
+function buildNaverMock(input: string): string {
   const trimmed = input.trim();
-  const short = trimmed.length > 160 ? `${trimmed.slice(0, 160)}...` : trimmed;
-  return `${short}\n\n이거 나만 그런 거 아니지? 😮`;
+  const short = trimmed.length > 200 ? `${trimmed.slice(0, 200)}...` : trimmed;
+  return `${short}\n\n오늘 있었던 일을 이렇게 적어봤어요. 비슷한 경험 있으신가요?\n\n앞으로도 가끔 일상을 여기에 남겨보려고 합니다.`;
 }
 
 export function DemoSection() {
   const sectionRef = useRef<HTMLElement | null>(null);
   const [inputText, setInputText] = useState("");
   const [outputText, setOutputText] = useState("");
-  const [activeTab, setActiveTab] = useState<"instagram" | "twitter">("instagram");
+  const [activeTab, setActiveTab] = useState<"instagram" | "naver">("instagram");
   const [activePresetId, setActivePresetId] = useState<number | null>(null);
   const [showShareMenu, setShowShareMenu] = useState(false);
   const [isTranslating, setIsTranslating] = useState(false);
@@ -108,7 +110,7 @@ export function DemoSection() {
     if (preset) {
       setAiResult(null);
       setOutputText(
-        activeTab === "instagram" ? preset.results.instagram : preset.results.twitter
+        activeTab === "instagram" ? preset.results.instagram : preset.results.naver
       );
       setIsConverted(true);
       setShowShareMenu(false);
@@ -119,7 +121,7 @@ export function DemoSection() {
     try {
       const translated = await translateWithPersonaApi(inputText);
       setAiResult(translated);
-      setOutputText(activeTab === "instagram" ? translated.instagram : translated.twitter);
+      setOutputText(activeTab === "instagram" ? translated.instagram : translated.naver);
       setIsConverted(true);
       setShowShareMenu(false);
     } catch (error) {
@@ -142,7 +144,7 @@ export function DemoSection() {
     setShowShareMenu(false);
   };
 
-  const handleTabChange = (tab: "instagram" | "twitter") => {
+  const handleTabChange = (tab: "instagram" | "naver") => {
     setActiveTab(tab);
 
     // 결과가 없는 상태에서는 탭 전환만으로 자동 생성하지 않습니다.
@@ -152,18 +154,18 @@ export function DemoSection() {
       const preset = EXAMPLE_PRESETS.find((p) => p.id === activePresetId);
       if (!preset) return;
 
-      setOutputText(tab === "instagram" ? preset.results.instagram : preset.results.twitter);
+      setOutputText(tab === "instagram" ? preset.results.instagram : preset.results.naver);
       setIsConverted(true);
       return;
     }
 
     if (aiResult) {
-      setOutputText(tab === "instagram" ? aiResult.instagram : aiResult.twitter);
+      setOutputText(tab === "instagram" ? aiResult.instagram : aiResult.naver);
       setIsConverted(true);
       return;
     }
 
-    setOutputText(tab === "instagram" ? buildInstagramMock(inputText) : buildTwitterMock(inputText));
+    setOutputText(tab === "instagram" ? buildInstagramMock(inputText) : buildNaverMock(inputText));
     setIsConverted(true);
   };
   const {
@@ -183,17 +185,20 @@ export function DemoSection() {
     setOutputText,
     setIsConverted,
     buildInstagramMock,
-    buildTwitterMock,
+    buildNaverMock,
   });
 
+  const NaverBlogIcon = ({ className }: { className?: string }) => (
+    <svg className={className} fill="none" viewBox="0 0 24 24" aria-hidden>
+      <path d={svgPaths.p3fc5fe30} fill="currentColor" />
+      <path d={svgPaths.p1bde6d80} fill="currentColor" />
+      <path d={svgPaths.p1f483300} fill="currentColor" />
+      <path d={svgPaths.p159aae00} fill="currentColor" />
+    </svg>
+  );
 
-  const XIcon = ({ className }: { className?: string }) => (
-    <svg
-      viewBox="0 0 25 22"
-      aria-hidden="true"
-      className={className}
-      fill="currentColor"
-    >
+  const XShareIcon = ({ className }: { className?: string }) => (
+    <svg viewBox="0 0 25 22" aria-hidden className={className} fill="currentColor">
       <path d="M18.244 2H21.308L14.548 9.73L22.5 20H16.29L11.427 13.79L5.93 20H2.864L10.097 11.74L2.5 2H8.868L13.262 7.676L18.244 2ZM17.168 18.1H18.865L7.946 3.8H6.123L17.168 18.1Z" />
     </svg>
   );
@@ -202,7 +207,7 @@ export function DemoSection() {
     { icon: Share2, label: "Share Link", action: handleSystemShare },
     { icon: Link2, label: "Copy Link", action: handleCopyLink },
     { icon: Send, label: "Share to Threads", action: handleShareToThreads },
-    { icon: XIcon, label: "Post to X", action: handleShareToX },
+    { icon: XShareIcon, label: "X로 공유", action: handleShareToX },
   ];
 
   return (
@@ -327,16 +332,16 @@ export function DemoSection() {
                   </button>
                   <button
                     onClick={() => {
-                      handleTabChange("twitter");
+                      handleTabChange("naver");
                     }}
                     className={`flex flex-1 items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-medium transition-all duration-200 ${
-                      activeTab === "twitter"
-                        ? "bg-gradient-to-r from-zinc-800 to-black text-white shadow-lg shadow-black/30"
+                      activeTab === "naver"
+                        ? "bg-gradient-to-r from-green-500 to-green-600 text-white shadow-lg shadow-green-500/20"
                         : "text-muted-foreground hover:bg-card/70 hover:text-foreground"
                     }`}
                   >
-                    <XIcon className="h-4 w-4" />
-                    X(트위터)
+                    <NaverBlogIcon className="h-4 w-4" />
+                    네이버 블로그
                   </button>
                 </div>
               </div>
@@ -505,15 +510,15 @@ export function DemoSection() {
                 </button>
                 <button
                   type="button"
-                  onClick={() => handleTabChange("twitter")}
+                  onClick={() => handleTabChange("naver")}
                   className={`flex flex-1 items-center justify-center gap-2 rounded-xl px-3 py-2 text-xs font-medium transition-all duration-200 ${
-                    activeTab === "twitter"
-                      ? "bg-gradient-to-r from-zinc-800 to-black text-white shadow-lg shadow-black/30"
+                    activeTab === "naver"
+                      ? "bg-gradient-to-r from-green-500 to-green-600 text-white shadow-lg shadow-green-500/20"
                       : "text-muted-foreground hover:bg-card/70 hover:text-foreground"
                   }`}
                 >
-                  <XIcon className="h-4 w-4" />
-                  X
+                  <NaverBlogIcon className="h-4 w-4 shrink-0" />
+                  <span className="leading-tight">네이버 블로그</span>
                 </button>
               </div>
 
@@ -669,13 +674,13 @@ export function DemoSection() {
                     </div>
                     <div
                       className={`flex flex-1 items-center justify-center gap-2 rounded-xl px-3 py-2 text-xs font-medium ${
-                        activeTab === "twitter"
-                          ? "bg-gradient-to-r from-zinc-800 to-black text-white shadow-lg shadow-black/30"
+                        activeTab === "naver"
+                          ? "bg-gradient-to-r from-green-500 to-green-600 text-white shadow-lg shadow-green-500/20"
                           : "text-muted-foreground"
                       }`}
                     >
-                      <XIcon className="h-4 w-4" />
-                      X
+                      <NaverBlogIcon className="h-4 w-4 shrink-0" />
+                      <span className="leading-tight">네이버 블로그</span>
                     </div>
                   </div>
 

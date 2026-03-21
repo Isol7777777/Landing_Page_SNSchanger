@@ -1,7 +1,9 @@
 import { getSupabaseClient } from "./supabaseClient";
 export type SharedLinkContent = {
   instagram: string;
-  twitter: string;
+  naver: string;
+  /** 레거시 공유 링크(이전 버전) */
+  twitter?: string;
   keywords: string[];
 };
 
