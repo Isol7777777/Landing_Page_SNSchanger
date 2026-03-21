@@ -1,4 +1,4 @@
-import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
+import { corsHeaders } from "jsr:@supabase/supabase-js@2/cors";
 
 const SYSTEM_PROMPT = `너는 대한민국 SNS 생태계를 완벽하게 구현하는 '콘텐츠 변환 전문가'야. 사용자의 메모를 [네이버 블로그]와 [인스타그램] 두 가지 버전으로 변환해줘.
 
@@ -36,9 +36,8 @@ function json(data: unknown, init?: ResponseInit) {
   return new Response(JSON.stringify(data), {
     ...init,
     headers: {
+      ...corsHeaders,
       "Content-Type": "application/json; charset=utf-8",
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
       ...(init?.headers ?? {}),
     },
   });
@@ -55,9 +54,10 @@ function parseOutput(raw: string): Output {
   return { naver, instagram };
 }
 
-serve(async (req) => {
+Deno.serve(async (req) => {
+  // 브라우저 프리플라이트 — 공식 corsHeaders(Allow-Methods 등 포함) 필수
   if (req.method === "OPTIONS") {
-    return json({ ok: true });
+    return new Response("ok", { headers: corsHeaders });
   }
 
   if (req.method !== "POST") {

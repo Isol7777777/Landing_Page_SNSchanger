@@ -1,0 +1,6 @@
+# Edge Function 설정 — 브라우저(다른 오리진)에서 supabase.functions.invoke 시
+# OPTIONS 프리플라이트가 게이트웨이에서 막히지 않도록 JWT 검증을 끕니다.
+# 배포: supabase functions deploy persona-translate
+# 대시보드만 쓰는 경우: Edge Functions → persona-translate → JWT verification 끄기
+[functions.persona-translate]
+verify_jwt = false
