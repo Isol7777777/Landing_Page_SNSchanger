@@ -106,7 +106,7 @@ export function CTASection() {
                   setAgreements({ age: next, privacy: next, marketing: next });
                 }}
               />
-              <div className="flex size-6 items-center justify-center rounded-md border-2 border-white bg-gray-500 transition-all">
+              <div className="flex size-6 shrink-0 items-center justify-center rounded-md border-2 border-white bg-gray-500 transition-all">
                 {allAgreed && <Check className="size-4 text-white" />}
               </div>
               <span className="text-white font-bold leading-relaxed">
@@ -124,7 +124,7 @@ export function CTASection() {
                   setAgreements((prev) => ({ ...prev, age: !prev.age }))
                 }
               />
-              <div className="flex size-6 items-center justify-center rounded-md border-2 border-white bg-gray-500 transition-all">
+              <div className="flex size-6 shrink-0 items-center justify-center rounded-md border-2 border-white bg-gray-500 transition-all">
                 {agreements.age && (
                   <Check className="size-4 text-white" />
                 )}
@@ -136,8 +136,8 @@ export function CTASection() {
 
             {/* 개인정보 동의 */}
             <div className="space-y-2">
-              <div className="flex items-center justify-between gap-3">
-                <label className="flex items-center gap-3 cursor-pointer flex-1">
+              <div className="flex items-start justify-between gap-3">
+                <label className="flex min-w-0 flex-1 cursor-pointer items-start gap-3">
                   <input
                     type="checkbox"
                     className="hidden"
@@ -149,19 +149,19 @@ export function CTASection() {
                       }))
                     }
                   />
-                  <div className="flex size-6 items-center justify-center rounded-md border-2 border-white bg-gray-500 transition-all">
+                  <div className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-md border-2 border-white bg-gray-500 transition-all">
                     {agreements.privacy && (
                       <Check className="size-4 text-white" />
                     )}
                   </div>
-                  <span className="text-white font-medium">
+                  <span className="min-w-0 flex-1 text-white font-medium leading-relaxed">
                     (필수) 개인정보 수집 및 이용에 동의합니다.
                   </span>
                 </label>
                 <button
                   type="button"
                   onClick={() => setShowPrivacyDetails((prev) => !prev)}
-                  className="ml-3 text-xs text-white/70 hover:text-white underline-offset-2 hover:underline whitespace-nowrap"
+                  className="mt-0.5 shrink-0 text-xs text-white/70 hover:text-white underline-offset-2 hover:underline"
                 >
                   {showPrivacyDetails ? "닫기" : "자세히 보기"}
                 </button>
@@ -177,7 +177,7 @@ export function CTASection() {
 
             {/* 광고성 정보 수신 */}
             <div className="space-y-2">
-              <label className="flex items-center gap-3 cursor-pointer">
+              <label className="flex cursor-pointer items-start gap-3">
                 <input
                   type="checkbox"
                   className="hidden"
@@ -189,12 +189,12 @@ export function CTASection() {
                     }))
                   }
                 />
-                <div className="flex size-6 items-center justify-center rounded-md border-2 border-white bg-gray-500 transition-all">
+                <div className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-md border-2 border-white bg-gray-500 transition-all">
                   {agreements.marketing && (
                     <Check className="size-4 text-white" />
                   )}
                 </div>
-                <span className="text-white font-medium">
+                <span className="min-w-0 flex-1 text-white font-medium leading-relaxed">
                   (선택) 광고성 정보 수신에 동의합니다.
                 </span>
               </label>
