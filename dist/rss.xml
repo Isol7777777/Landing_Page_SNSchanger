@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>TapTap(탭탭)</title>
+    <link>https://test-example.com/</link>
+    <description>일상의 생각을 SNS에 맞게 변환하는 TapTap(탭탭) 랜딩페이지</description>
+    <language>ko-KR</language>
+    <lastBuildDate>Sat, 21 Mar 2026 13:43:54 GMT</lastBuildDate>
+    <atom:link href="https://test-example.com/rss.xml" rel="self" type="application/rss+xml"/>
+    <item>
+      <title>TapTap(탭탭) — 메인</title>
+      <link>https://test-example.com/</link>
+      <guid isPermaLink="true">https://test-example.com/</guid>
+      <pubDate>Sat, 21 Mar 2026 13:43:54 GMT</pubDate>
+      <description>사전예약 및 서비스 소개</description>
+    </item>
+  </channel>
+</rss>
