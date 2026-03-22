@@ -1,6 +1,7 @@
 import { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
 import App from "./app/App";
+import { recordPageView } from "./lib/pageViews";
 import "./styles/index.css";
 
 // OS 설정(다크/라이트)에 따라 자동으로 다크모드를 적용합니다.
@@ -29,6 +30,7 @@ const rootElement = document.getElementById("root");
 if (rootElement) {
   const root = ReactDOM.createRoot(rootElement);
   syncThemeWithSystem();
+  void recordPageView();
   root.render(
     <StrictMode>
       <App />
