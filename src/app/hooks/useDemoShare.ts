@@ -4,7 +4,6 @@ import type { SharedLinkContent } from "../../lib/shareService";
 type ActiveTab = "instagram" | "naver";
 
 type UseDemoShareParams = {
-  sectionRef: React.RefObject<HTMLElement | null>;
   inputText: string;
   outputText: string;
   activeTab: ActiveTab;
@@ -22,7 +21,6 @@ const SHARE_CAPTION = "내 아무말을 SNS 감성따라 세탁해드립니다. 
 const CAPTURE_TARGET_SELECTOR = "[data-capture-target=\"demo-grid\"]";
 
 export function useDemoShare({
-  sectionRef,
   inputText,
   outputText,
   activeTab,
@@ -100,7 +98,7 @@ export function useDemoShare({
     if (!sharedId) return;
 
     // 모바일에서는 공유 링크 파라미터 자동 복원을 비활성화합니다.
-    // (자동으로 결과가 채워지고 DemoSection으로 스크롤되는 현상 방지)
+    // (자동으로 결과가 채워지는 부담·레이아웃 점프 방지)
     if (isMobileDevice()) return;
 
     let cancelled = false;
@@ -114,10 +112,8 @@ export function useDemoShare({
         setActiveTab("instagram");
         setOutputText(shared.instagram ?? "");
         setIsConverted(true);
-
-        setTimeout(() => {
-          sectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-        }, 0);
+        // 공유 링크 복원 시 자동 스크롤하지 않음 — URL에 ?v=가 남은 채 새로고침·재방문할 때마다
+        // 데모 섹션으로 끌려가는 문제 방지 (히어로부터 보이도록 유지)
       } catch {
         setTimedShareStatus("공유 링크 복구에 실패했어요.");
       }
@@ -127,7 +123,7 @@ export function useDemoShare({
     return () => {
       cancelled = true;
     };
-  }, [sectionRef, setActiveTab, setInputText, setIsConverted, setOutputText]);
+  }, [setActiveTab, setInputText, setIsConverted, setOutputText]);
 
   const captureResultGridDataUrl = async (): Promise<string> => {
     const target = document.querySelector(CAPTURE_TARGET_SELECTOR) as HTMLElement | null;

@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from "motion/react";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import {
   Instagram,
   Share2,
@@ -95,7 +95,6 @@ const MOBILE_PRIMARY_CTA_CLASS =
   "flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[var(--vibrant-violet)] to-[var(--electric-blue)] px-6 py-4 text-base font-semibold text-white shadow-lg transition-all duration-200 hover:scale-[1.02] hover:shadow-purple-500/40 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100";
 
 export function DemoSection() {
-  const sectionRef = useRef<HTMLElement | null>(null);
   const [inputText, setInputText] = useState("");
   const [outputText, setOutputText] = useState("");
   const [activeTab, setActiveTab] = useState<"instagram" | "naver">("instagram");
@@ -182,7 +181,6 @@ export function DemoSection() {
     handleShareToThreads,
     handleShareToX,
   } = useDemoShare({
-    sectionRef,
     inputText,
     outputText,
     activeTab,
@@ -217,7 +215,7 @@ export function DemoSection() {
   ];
 
   return (
-    <section id="demo-section" ref={sectionRef} className="bg-background px-6 py-20">
+    <section id="demo-section" className="bg-background px-6 py-20">
       <div className="mx-auto max-w-[1024px]">
         {/* Header */}
         <motion.div
